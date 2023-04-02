@@ -101,7 +101,7 @@ def teardown_request(exception):
 
 #Homepage
 @app.route('/')
-def index():
+def homepage():
     """
     request is a special object that Flask provides to access web request information:
     request.method:   "GET" or "POST"
@@ -155,7 +155,7 @@ def index():
     # render_template looks in the templates/ folder for files.
     # for example, the below file reads template/index.html
     #
-    return render_template("index.html", **context)
+    return render_template("homepage.html", **context)
 
 
 @app.route('/results')
