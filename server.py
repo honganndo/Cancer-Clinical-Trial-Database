@@ -167,7 +167,7 @@ def login():
         if error is None:
             session.clear()
             session['name'] = user[0]
-            return redirect('/trialpage')
+            return redirect('/')
 
         flash(error)
 
@@ -181,6 +181,7 @@ def logout():
 
 #Homepage
 @app.route('/', methods=['GET', 'POST'])
+@login_required
 def homepage():
     with engine.connect() as connection:
         location_query = "SELECT location_name FROM location"
@@ -197,6 +198,7 @@ def homepage():
 
 
 @app.route('/results', methods=['GET', 'POST'])
+@login_required
 def results():
     location = request.form.get('location')
     status = request.form.get('status')
@@ -224,6 +226,7 @@ def results():
     return render_template("results.html", condition=condition, status=status, location=location, results = results)
 
 @app.route('/trialpage/<int:trial_id>')
+@login_required
 def trialpage(trial_id):
     with engine.connect() as connection:
         results_query = "SELECT * FROM clinical_trials clin \
@@ -242,14 +245,17 @@ def trialpage(trial_id):
     return render_template("trialpage.html", results = results)
 
 @app.route('/invalidsearch')
+@login_required
 def invalidsearch():
     return render_template("invalidsearch.html")
 
 @app.route('/account')
+@login_required
 def account():
     return render_template("account.html")
 
 @app.route('/saves/add', methods=['POST'])
+@login_required
 def add_save():
     trial_id = request.form['trial_id']
     institution_query = "SELECT institution_name FROM sponsors WHERE nct = {}".format(trial_id)
@@ -271,19 +277,6 @@ def add_save():
     prevent error when already favorited or unfavorited'''
 
     return redirect(url_for('trialpage', trial_id = trial_id))
-
-# Example of adding new data to the database
-@app.route('/add', methods=['POST'])
-def add():
-    # accessing form inputs from user
-    name = request.form['name']
-
-    # passing params in for each variable into query
-    params = {}
-    params["new_name"] = name
-    g.conn.execute(text('INSERT INTO test(name) VALUES (:new_name)'), params)
-    g.conn.commit()
-    return redirect('/')
 
 
 if __name__ == "__main__":
