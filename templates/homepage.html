@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Cancer Clinical Trial Search Database</title>
-</head>
-<body>
-  <h1>Cancer Clinical Trial Search Database</h1>
+{% extends 'base.html' %}
 
+{% block header %}
+  <h1>{% block title %}Search{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
   <form>
     <label for="condition">Condition/Keyword:</label>
     <input type="text" id="condition" name="condition"><br><br>
@@ -17,7 +15,7 @@
       <option value="newyork">New York</option>
       <option value="losangeles">Los Angeles</option>
       <option value="chicago">Chicago</option>
-      <option value="houston">Houston</option>
+      <option value="Duke University Hospital"> Duke University Hospital</option>
     </select><br><br>
 
     <label for="status">Status:</label>
@@ -30,10 +28,4 @@
 
     <input type="submit" value="Search">
   </form>
-
-  <br>
-
-  <a href="account.html">My Account</a>
-
-</body>
-</html>
+{% endblock %}

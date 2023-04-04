@@ -78,60 +78,14 @@
 
   <br>
 
-  <table border="1">
-    <thead>
-      <tr>
-        <th>Row</th>
-        <th>Trial Name</th>
-        <th>Description</th>
-        <th>Status</th>
-        <th>Phase</th>
-        <th>Type</th>
-        <th>Condition</th>
-        <th>Intervention</th>
-        <th>Age</th>
-        <th>Sex</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>1</td>
-        <td>Trial 1</td>
-        <td>Description of Trial 1</td>
-        <td>Actively Recruiting</td>
-        <td>Phase 3</td>
-        <td>Interventional</td>
-        <td>Condition 1</td>
-        <td>Intervention 1</td>
-        <td>18-65</td>
-        <td>Both</td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>Trial 2</td>
-        <td>Description of Trial 2</td>
-        <td>Not Recruiting</td>
-        <td>Phase 1</td>
-        <td>Interventional</td>
-        <td>Condition 2</td>
-        <td>Intervention 2</td>
-        <td>30-75</td>
-        <td>Male</td>
-      </tr>
-      <tr>
-        <td>3</td>
-        <td>Trial 3</td>
-        <td>Description of Trial 3</td>
-        <td>Completed</td>
-        <td>Phase 2</td>
-        <td>Observational</td>
-        <td>Condition 3</td>
-        <td>N/A</td>
-        <td>18+</td>
-        <td>Female</td>
-      </tr>
-    </tbody>
-  </table>
+  <h1>Trial Name</h1>
+  <div>{{data}}</div>
+
+  <div>
+    {% for n in data %}
+    <div>{{n}}</div>
+    {% endfor %}
+  </div>
 
   <br>
 
