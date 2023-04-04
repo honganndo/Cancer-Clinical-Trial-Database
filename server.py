@@ -229,7 +229,7 @@ def results():
 @login_required
 def trialpage(trial_id):
     with engine.connect() as connection:
-        results_query = "SELECT * FROM clinical_trials clin \
+        results_query = "SELECT DISTINCT * FROM clinical_trials clin \
                         JOIN sponsors spon ON spon.nct = clin.nct \
                         JOIN institution inst ON inst.institution_name = spon.institution_name \
                         JOIN eligibility elig ON clin.eligibility_id = elig.eligibility_id \
@@ -240,7 +240,7 @@ def trialpage(trial_id):
                         JOIN intervention int ON int.treatment = stud.treatment AND int.treatment_type = stud.treatment_type \
                         WHERE clin.nct = '{}'".format(trial_id)
 
-        results = connection.execute(text(results_query))
+        results = connection.execute(text(results_query)).fetchone()
 
     return render_template("trialpage.html", results = results)
 
@@ -252,7 +252,23 @@ def invalidsearch():
 @app.route('/account')
 @login_required
 def account():
-    return render_template("account.html")
+    with engine.connect() as connection:
+        user_query = "SELECT * \
+                        FROM user_account \
+                        WHERE user_name = '{}'".format(session['name'])
+
+        user = connection.execute(text(user_query))
+
+        results_query = "SELECT * \
+                        FROM clinical_trials clin \
+                        JOIN saves sav ON sav.nct = clin.nct\
+                        JOIN user_account ua ON ua.user_name = sav.user_name\
+                        WHERE ua.user_name = '{}'".format(session['name'])
+
+        results = connection.execute(text(results_query))
+
+    return render_template("account.html", results = results, user = user)
+
 
 @app.route('/saves/add', methods=['POST'])
 @login_required
