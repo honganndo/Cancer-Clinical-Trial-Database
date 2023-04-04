@@ -125,7 +125,20 @@ def results():
 
     with engine.connect() as connection:
         results_query = "SELECT * FROM clinical_trials"
+        input = []
 
+        if location:
+            input.append("UPPER(location.location_name) = UPPER('{}')".format(location))
+            results_query += " JOIN takes_place ON clinical_trials.nct = takes_place.nct"
+            results_query += " JOIN location ON takes_place.location_name = location.location_name"
+        if status != 'all':
+            input.append("UPPER(status) = UPPER('{}')".format(status))
+        if condition:
+            input.append(
+                "UPPER(trial_name) LIKE UPPER('%{}%') OR UPPER(description) LIKE UPPER('%{}%')".format(condition,
+                                                                                                       condition))
+        if input:
+            results_query += " WHERE (" + ") AND (".join(input) + ")"
 
         results = connection.execute(text(results_query)).fetchall()
 
