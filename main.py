@@ -43,6 +43,7 @@ engine = create_engine(DATABASEURI)
 # Example of running queries in your database
 # Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
 #
+'''
 with engine.connect() as conn:
     create_table_command = """
 	CREATE TABLE IF NOT EXISTS test (
@@ -56,7 +57,7 @@ with engine.connect() as conn:
     # you need to commit for create, insert, update queries to reflect
     conn.commit()
 
-
+'''
 @app.before_request
 def before_request():
     """
@@ -109,8 +110,8 @@ def homepage():
 
     if request.method == 'POST':
         location = request.form.get('location')
-        status = request.form('status')
-        condition = request.form('condition')
+        status = request.form.get('status')
+        condition = request.form.get('condition')
         return redirect(url_for('results', location=location, status=status, condition=condition))
 
     return render_template("homepage.html", locations=locations)
@@ -118,28 +119,17 @@ def homepage():
 
 @app.route('/results', methods=['GET', 'POST'])
 def results():
-    location = request.args.get('location')
-    status = request.args.get('status')
-    condition = request.args.get('condition')
+    location = request.form.get('location')
+    status = request.form.get('status')
+    condition = request.form.get('condition')
 
     with engine.connect() as connection:
-        results_query = "SELECT trial_name FROM clinical_trials"
-        conditions = []
+        results_query = "SELECT * FROM clinical_trials"
 
-        if location:
-            conditions.append("UPPER(location_name) = UPPER('{}')".format(location))
-        if status:
-            conditions.append("UPPER(status) = UPPER('{}')".format(status))
-        if condition:
-            conditions.append(
-                "UPPER(trial_name) LIKE UPPER('%{}%') OR UPPER(description) LIKE UPPER('%{}%')".format(condition,
-                                                                                                       condition))
-        if conditions:
-            results_query += " WHERE " + " AND ".join(conditions)
 
         results = connection.execute(text(results_query)).fetchall()
 
-    return render_template("results2.html", condition=condition, status=status, location=location, results = results)
+    return render_template("results.html", condition=condition, status=status, location=location, results = results)
 
 
 @app.route('/trialpage')
