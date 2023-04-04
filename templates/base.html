@@ -1,16 +1,16 @@
 <!doctype html>
 <title>{% block title %}{% endblock %} - Flaskr</title>
 <nav>
-  <h1>Cancer Clinical Trial Database</h1>
-  <ul>
-    {% if g.user %}
-      <li><span>{{ g.user['user_name'] }}</span>
-      <li><a href="logout">Log Out</a>
-    {% else %}
-      <li><a href="register">Register</a>
-      <li><a href="login">Log In</a>
-    {% endif %}
-  </ul>
+  <h1><u>Cancer Clinical Trial Database</u></h1>
+  {% if g.user %}
+    <span>User: {{ g.user['user_name'] }}</span>
+    <br>
+    <a href="logout">Log Out</a>
+  {% else %}
+    <a href="register">Register</a>
+    <br>
+    <a href="login">Log In</a>
+  {% endif %}
 </nav>
 <section class="content">
   <header>

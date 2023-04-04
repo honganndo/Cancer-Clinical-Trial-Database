@@ -5,10 +5,10 @@
 {% endblock %}
 
 {% block content %}
-  <form>
+
+  <form method="POST" action="{{ url_for('results') }}">
     <label for="condition">Condition/Keyword:</label>
     <input type="text" id="condition" name="condition" placeholder="Search by keyword"><br><br>
-    <br>
     <label for="location">Location:</label>
     <select id="location" name="location" >
       <option value="">--Select Location--</option>
@@ -16,7 +16,6 @@
             <option value="{{ location }}">{{ location }}</option>
         {% endfor %}
     </select>
-    <br>
     <label for="status">Status:</label>
     <select id="status" name="status">
       <option value="all">All</option>
