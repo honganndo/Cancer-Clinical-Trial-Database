@@ -144,10 +144,13 @@ def results():
 
     return render_template("results.html", condition=condition, status=status, location=location, results = results)
 
+@app.route('/trialpage/<int:trial_id>')
+def trialpage(trial_id):
+    with engine.connect() as connection:
+        result_query = "SELECT * FROM clinical_trials WHERE nct = {}".format(trial_id)
+        result = connection.execute(text(result_query)).fetchone()
 
-@app.route('/trialpage')
-def trialpage():
-    return render_template("trialpage.html")
+    return render_template("trialpage.html", result=result)
 
 @app.route('/invalidsearch')
 def invalidsearch():
@@ -160,6 +163,29 @@ def login_create():
 @app.route('/account')
 def account():
     return render_template("account.html")
+
+@app.route('/saves/add', methods=['POST'])
+def add_save():
+    trial_id = request.form['trial_id']
+    institution_query = "SELECT institution_name FROM sponsors WHERE nct = {}".format(trial_id)
+    institution_row = g.conn.execute(text(institution_query)).fetchone()
+    institution = institution_row[0]
+
+    params = {}
+    params["username"] = "test"
+    params["nct"] = trial_id
+    params["institution"] = institution
+
+    g.conn.execute(text("INSERT INTO saves (user_name,nct, institution_name) VALUES (:username, :nct, :institution)"),
+                           params)
+    g.conn.commit()
+
+    '''TO DO
+    favorited status on page
+    unfavorite button
+    prevent error when already favorited or unfavorited'''
+
+    return redirect(url_for('trialpage', trial_id = trial_id))
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
@@ -183,7 +209,6 @@ def login():
 
 if __name__ == "__main__":
     import click
-
 
     @click.command()
     @click.option('--debug', is_flag=True)
