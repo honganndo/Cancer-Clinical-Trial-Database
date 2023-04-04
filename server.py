@@ -289,11 +289,11 @@ def add_save():
     institution = institution_row[0]
 
     params = {}
-    params["username"] = "test"
+    params["username"] = session['name']
     params["nct"] = trial_id
     params["institution"] = institution
 
-    g.conn.execute(text("INSERT INTO saves (user_name,nct, institution_name) VALUES (:username, :nct, :institution)"),
+    g.conn.execute(text("INSERT INTO saves (user_name, nct, institution_name) VALUES (:username, :nct, :institution)"),
                            params)
     g.conn.commit()
 
