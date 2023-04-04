@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Search Results</title>
-</head>
-<body>
-  <h1>Cancer Clinical Trial Search Results</h1>
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Search{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
 
   <form method="get">
     <label for="condition">Search for another condition/keyword:</label>
@@ -105,15 +105,4 @@
         </tbody>
     </table>
 
-  <br>
-
-  <form method="get" action="/">
-    <input type="submit" value="Back to Home">
-  </form>
-
-  <form method="get" action="/account">
-    <input type="submit" value="My Account">
-  </form>
-
-</body>
-</html>
+  {% endblock %}

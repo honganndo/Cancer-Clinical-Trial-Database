@@ -5,7 +5,17 @@
   {% if g.user %}
     <span>User: {{ g.user['user_name'] }}</span>
     <br>
+
     <a href="logout">Log Out</a>
+
+    <br><br>
+
+    <form method="get" action="/">
+      <input type="submit" value="Back to Home">
+    </form>
+    <form method="get" action="/account">
+      <input type="submit" value="My Account">
+    </form>
   {% else %}
     <a href="register">Register</a>
     <br>
@@ -17,7 +27,7 @@
     {% block header %}{% endblock %}
   </header>
   {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
+    <b><div class="flash">{{ message }}</div></b>
   {% endfor %}
   {% block content %}{% endblock %}
 </section>

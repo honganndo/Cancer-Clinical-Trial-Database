@@ -230,11 +230,7 @@ def results():
 def trialpage(trial_id):
     with engine.connect() as connection:
         results_query = "SELECT * FROM clinical_trials clin \
-                        JOIN sponsors spon ON spon.nct = clin.nct \
-                        JOIN institution inst ON inst.institution_name = spon.institution_name \
                         JOIN eligibility elig ON clin.eligibility_id = elig.eligibility_id \
-                        JOIN takes_place tp ON tp.nct = clin.nct \
-                        JOIN location loc ON loc.location_name = tp.location_name \
                         JOIN study stud ON stud.nct = clin.nct \
                         JOIN condition con ON con.cancer_type = stud.cancer_type \
                         JOIN intervention int ON int.treatment = stud.treatment AND int.treatment_type = stud.treatment_type \
@@ -242,7 +238,21 @@ def trialpage(trial_id):
 
         results = connection.execute(text(results_query))
 
-    return render_template("trialpage.html", results = results)
+        locations_query = "SELECT * FROM clinical_trials clin \
+                        JOIN takes_place tp ON tp.nct = clin.nct \
+                        JOIN location loc ON loc.location_name = tp.location_name \
+                        WHERE clin.nct = '{}'".format(trial_id)
+
+        locations = connection.execute(text(locations_query))
+
+        sponsors_query = "SELECT * FROM clinical_trials clin \
+                        JOIN sponsors spon ON spon.nct = clin.nct \
+                        JOIN institution inst ON inst.institution_name = spon.institution_name \
+                        WHERE clin.nct = '{}'".format(trial_id)
+
+        sponsors = connection.execute(text(sponsors_query))
+
+    return render_template("trialpage.html", results = results, sponsors = sponsors, locations = locations)
 
 @app.route('/invalidsearch')
 @login_required
@@ -252,7 +262,23 @@ def invalidsearch():
 @app.route('/account')
 @login_required
 def account():
-    return render_template("account.html")
+    with engine.connect() as connection:
+        user_query = "SELECT * \
+                        FROM user_account \
+                        WHERE user_name = '{}'".format(session['name'])
+
+        user = connection.execute(text(user_query))
+
+        results_query = "SELECT * \
+                        FROM clinical_trials clin \
+                        JOIN saves sav ON sav.nct = clin.nct\
+                        JOIN user_account ua ON ua.user_name = sav.user_name\
+                        WHERE ua.user_name = '{}'".format(session['name'])
+
+        results = connection.execute(text(results_query))
+
+    return render_template("account.html", results = results, user = user)
+
 
 @app.route('/saves/add', methods=['POST'])
 @login_required
