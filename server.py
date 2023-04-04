@@ -229,20 +229,30 @@ def results():
 @login_required
 def trialpage(trial_id):
     with engine.connect() as connection:
-        results_query = "SELECT DISTINCT * FROM clinical_trials clin \
-                        JOIN sponsors spon ON spon.nct = clin.nct \
-                        JOIN institution inst ON inst.institution_name = spon.institution_name \
+        results_query = "SELECT * FROM clinical_trials clin \
                         JOIN eligibility elig ON clin.eligibility_id = elig.eligibility_id \
-                        JOIN takes_place tp ON tp.nct = clin.nct \
-                        JOIN location loc ON loc.location_name = tp.location_name \
                         JOIN study stud ON stud.nct = clin.nct \
                         JOIN condition con ON con.cancer_type = stud.cancer_type \
                         JOIN intervention int ON int.treatment = stud.treatment AND int.treatment_type = stud.treatment_type \
                         WHERE clin.nct = '{}'".format(trial_id)
 
-        results = connection.execute(text(results_query)).fetchone()
+        results = connection.execute(text(results_query))
 
-    return render_template("trialpage.html", results = results)
+        locations_query = "SELECT * FROM clinical_trials clin \
+                        JOIN takes_place tp ON tp.nct = clin.nct \
+                        JOIN location loc ON loc.location_name = tp.location_name \
+                        WHERE clin.nct = '{}'".format(trial_id)
+
+        locations = connection.execute(text(locations_query))
+
+        sponsors_query = "SELECT * FROM clinical_trials clin \
+                        JOIN sponsors spon ON spon.nct = clin.nct \
+                        JOIN institution inst ON inst.institution_name = spon.institution_name \
+                        WHERE clin.nct = '{}'".format(trial_id)
+
+        sponsors = connection.execute(text(sponsors_query))
+
+    return render_template("trialpage.html", results = results, sponsors = sponsors, locations = locations)
 
 @app.route('/invalidsearch')
 @login_required
