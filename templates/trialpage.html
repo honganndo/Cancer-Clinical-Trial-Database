@@ -17,6 +17,12 @@
     {% for result in results %}
     <h1>{{ result[1] }}</h1>
 
+
+    <form action="{{ url_for('add_save') }}" method="POST">
+      <input type="hidden" name="trial_id" value="{{ result.nct }}">
+      <button type="submit">Add to Favorites</button>
+    </form>
+    
     <h2>Description</h2>
     <p>{{ result[2] }}</p>
 

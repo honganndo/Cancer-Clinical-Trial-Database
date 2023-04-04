@@ -43,6 +43,7 @@ engine = create_engine(DATABASEURI)
 # Example of running queries in your database
 # Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
 #
+'''
 with engine.connect() as conn:
     create_table_command = """
 	CREATE TABLE IF NOT EXISTS test (
@@ -56,7 +57,7 @@ with engine.connect() as conn:
     # you need to commit for create, insert, update queries to reflect
     conn.commit()
 
-
+'''
 @app.before_request
 def before_request():
     """
@@ -109,8 +110,8 @@ def homepage():
 
     if request.method == 'POST':
         location = request.form.get('location')
-        status = request.form('status')
-        condition = request.form('condition')
+        status = request.form.get('status')
+        condition = request.form.get('condition')
         return redirect(url_for('results', location=location, status=status, condition=condition))
 
     return render_template("homepage.html", locations=locations)
@@ -118,33 +119,38 @@ def homepage():
 
 @app.route('/results', methods=['GET', 'POST'])
 def results():
-    location = request.args.get('location')
-    status = request.args.get('status')
-    condition = request.args.get('condition')
+    location = request.form.get('location')
+    status = request.form.get('status')
+    condition = request.form.get('condition')
 
     with engine.connect() as connection:
-        results_query = "SELECT trial_name FROM clinical_trials"
-        conditions = []
+        results_query = "SELECT * FROM clinical_trials"
+        input = []
 
         if location:
-            conditions.append("UPPER(location_name) = UPPER('{}')".format(location))
-        if status:
-            conditions.append("UPPER(status) = UPPER('{}')".format(status))
+            input.append("UPPER(location.location_name) = UPPER('{}')".format(location))
+            results_query += " JOIN takes_place ON clinical_trials.nct = takes_place.nct"
+            results_query += " JOIN location ON takes_place.location_name = location.location_name"
+        if status != 'all':
+            input.append("UPPER(status) = UPPER('{}')".format(status))
         if condition:
-            conditions.append(
+            input.append(
                 "UPPER(trial_name) LIKE UPPER('%{}%') OR UPPER(description) LIKE UPPER('%{}%')".format(condition,
                                                                                                        condition))
-        if conditions:
-            results_query += " WHERE " + " AND ".join(conditions)
+        if input:
+            results_query += " WHERE (" + ") AND (".join(input) + ")"
 
         results = connection.execute(text(results_query)).fetchall()
 
-    return render_template("results2.html", condition=condition, status=status, location=location, results = results)
+    return render_template("results.html", condition=condition, status=status, location=location, results = results)
 
+@app.route('/trialpage/<int:trial_id>')
+def trialpage(trial_id):
+    with engine.connect() as connection:
+        result_query = "SELECT * FROM clinical_trials WHERE nct = {}".format(trial_id)
+        result = connection.execute(text(result_query)).fetchone()
 
-@app.route('/trialpage')
-def trialpage():
-    return render_template("trialpage.html")
+    return render_template("trialpage.html", result=result)
 
 @app.route('/invalidsearch')
 def invalidsearch():
@@ -157,6 +163,29 @@ def login_create():
 @app.route('/account')
 def account():
     return render_template("account.html")
+
+@app.route('/saves/add', methods=['POST'])
+def add_save():
+    trial_id = request.form['trial_id']
+    institution_query = "SELECT institution_name FROM sponsors WHERE nct = {}".format(trial_id)
+    institution_row = g.conn.execute(text(institution_query)).fetchone()
+    institution = institution_row[0]
+
+    params = {}
+    params["username"] = "test"
+    params["nct"] = trial_id
+    params["institution"] = institution
+
+    g.conn.execute(text("INSERT INTO saves (user_name,nct, institution_name) VALUES (:username, :nct, :institution)"),
+                           params)
+    g.conn.commit()
+
+    '''TO DO
+    favorited status on page
+    unfavorite button
+    prevent error when already favorited or unfavorited'''
+
+    return redirect(url_for('trialpage', trial_id = trial_id))
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
@@ -180,7 +209,6 @@ def login():
 
 if __name__ == "__main__":
     import click
-
 
     @click.command()
     @click.option('--debug', is_flag=True)

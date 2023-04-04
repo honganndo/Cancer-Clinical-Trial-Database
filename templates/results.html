@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Cancer Clinical Trial Search Results</title>
+    <title>Search Results</title>
 </head>
 <body>
   <h1>Cancer Clinical Trial Search Results</h1>
@@ -78,14 +77,34 @@
 
   <br>
 
-  <h1>Trial Name</h1>
-  <div>{{data}}</div>
-
-  <div>
-    {% for n in data %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
+  <h1>Search Results</h1>
+    <p>Location: {{ location }}</p>
+    <p>Status: {{ status }}</p>
+    <p>Condition: {{ condition }}</p>
+    <table border="1">
+      <thead>
+            <tr>
+                <th> Trial Name </th>
+                <th> Description </th>
+                <th> Status </th>
+                <th> Number of Patients </th>
+                <th> Type </th>
+                <th> Phase </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+                <tr>
+                    <td><a href="{{ url_for('trialpage', trial_id=result[0]) }}">{{ result[1] }}</a></td>
+                    <td>{{ result[2] }}</td>
+                    <td>{{ result[3] }}</td>
+                    <td>{{ result[4] }}</td>
+                    <td>{{ result[5] }}</td>
+                    <td>{{ result[6] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
   <br>
 

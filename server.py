@@ -47,8 +47,8 @@ engine = create_engine(DATABASEURI)
 # Example of running queries in your database
 # Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
 #
-with engine.connect() as conn:
-    pass
+# with engine.connect() as conn:
+#     pass
 
 def login_required(view):
     @functools.wraps(view)
@@ -180,49 +180,51 @@ def logout():
     
 
 #Homepage
-@app.route('/')
-@login_required
+@app.route('/', methods=['GET', 'POST'])
 def homepage():
+    with engine.connect() as connection:
+        location_query = "SELECT location_name FROM location"
+        result = connection.execute(text(location_query))
+        locations = [row[0] for row in result]
+
     if request.method == 'POST':
-        condition = request.form['condition']
-        # location = request.form['location']
-        # status = request.form['status']
-        
-        params = {}
-        params["param_condition"] = condition
-        # params["param_location"] = location
-        # params["param_status"] = status
+        location = request.form.get('location')
+        status = request.form.get('status')
+        condition = request.form.get('condition')
+        return redirect(url_for('results', location=location, status=status, condition=condition))
 
-        # cursor = g.conn.execute(text("SELECT DISTINCT t.trial_name \
-        #                             FROM clinical_trials t \
-        #                             JOIN takes_place tp ON t.nct = tp.nct \
-        #                             JOIN location l ON l.location_name = tp.location_name \
-        #                             WHERE (t.trial_name LIKE '%%:condition%%' OR t.description LIKE '%%:condition%%') \
-        #                             AND t.status = ':param_status' \
-        #                             AND l.location_name =':param_location'"), params)
-        cursor = g.conn.execute(text("SELECT DISTINCT t.trial_name FROM clinical_trials t"))
-        names = []
-        for result in cursor:
-            names.append(result[0])
-            print(result[0])
-        cursor.close()
-
-        context = dict(data = names)
-    
-        return render_template("homepage.html", **context)
-    
-    return render_template("homepage.html")
+    return render_template("homepage.html", locations=locations)
 
 
-@app.route('/results')
+@app.route('/results', methods=['GET', 'POST'])
 def results():
-    return render_template("results.html")
+    location = request.form.get('location')
+    status = request.form.get('status')
+    condition = request.form.get('condition')
 
-@app.route('/trialpage', methods=['GET', 'POST'])
-def trialpage():
-    # nct = request.form.get('nct')
-    nct = 11111111
+    with engine.connect() as connection:
+        results_query = "SELECT * FROM clinical_trials"
+        input = []
 
+        if location:
+            input.append("UPPER(location.location_name) = UPPER('{}')".format(location))
+            results_query += " JOIN takes_place ON clinical_trials.nct = takes_place.nct"
+            results_query += " JOIN location ON takes_place.location_name = location.location_name"
+        if status != 'all':
+            input.append("UPPER(status) = UPPER('{}')".format(status))
+        if condition:
+            input.append(
+                "UPPER(trial_name) LIKE UPPER('%{}%') OR UPPER(description) LIKE UPPER('%{}%')".format(condition,
+                                                                                                       condition))
+        if input:
+            results_query += " WHERE (" + ") AND (".join(input) + ")"
+
+        results = connection.execute(text(results_query)).fetchall()
+
+    return render_template("results.html", condition=condition, status=status, location=location, results = results)
+
+@app.route('/trialpage/<int:trial_id>')
+def trialpage(trial_id):
     with engine.connect() as connection:
         results_query = "SELECT * FROM clinical_trials clin \
                         JOIN sponsors spon ON spon.nct = clin.nct \
@@ -233,7 +235,7 @@ def trialpage():
                         JOIN study stud ON stud.nct = clin.nct \
                         JOIN condition con ON con.cancer_type = stud.cancer_type \
                         JOIN intervention int ON int.treatment = stud.treatment AND int.treatment_type = stud.treatment_type \
-                        WHERE clin.nct = '{}'".format(nct)
+                        WHERE clin.nct = '{}'".format(trial_id)
 
         results = connection.execute(text(results_query))
 
@@ -247,6 +249,28 @@ def invalidsearch():
 def account():
     return render_template("account.html")
 
+@app.route('/saves/add', methods=['POST'])
+def add_save():
+    trial_id = request.form['trial_id']
+    institution_query = "SELECT institution_name FROM sponsors WHERE nct = {}".format(trial_id)
+    institution_row = g.conn.execute(text(institution_query)).fetchone()
+    institution = institution_row[0]
+
+    params = {}
+    params["username"] = "test"
+    params["nct"] = trial_id
+    params["institution"] = institution
+
+    g.conn.execute(text("INSERT INTO saves (user_name,nct, institution_name) VALUES (:username, :nct, :institution)"),
+                           params)
+    g.conn.commit()
+
+    '''TO DO
+    favorited status on page
+    unfavorite button
+    prevent error when already favorited or unfavorited'''
+
+    return redirect(url_for('trialpage', trial_id = trial_id))
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
@@ -264,7 +288,6 @@ def add():
 
 if __name__ == "__main__":
     import click
-
 
     @click.command()
     @click.option('--debug', is_flag=True)

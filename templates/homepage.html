@@ -7,25 +7,27 @@
 {% block content %}
   <form>
     <label for="condition">Condition/Keyword:</label>
-    <input type="text" id="condition" name="condition"><br><br>
-
+    <input type="text" id="condition" name="condition" placeholder="Search by keyword"><br><br>
+    <br>
     <label for="location">Location:</label>
-    <select id="location" name="location">
-      <option value="anywhere">Anywhere</option>
-      <option value="newyork">New York</option>
-      <option value="losangeles">Los Angeles</option>
-      <option value="chicago">Chicago</option>
-      <option value="Duke University Hospital"> Duke University Hospital</option>
-    </select><br><br>
-
+    <select id="location" name="location" >
+      <option value="">--Select Location--</option>
+        {% for location in locations %}
+            <option value="{{ location }}">{{ location }}</option>
+        {% endfor %}
+    </select>
+    <br>
     <label for="status">Status:</label>
     <select id="status" name="status">
       <option value="all">All</option>
-      <option value="recruiting">Actively Recruiting</option>
-      <option value="notrecruiting">Not Recruiting</option>
+      <option value="actively recruiting">Actively Recruiting</option>
+      <option value="not yet recruiting">Not Recruiting</option>
       <option value="completed">Completed</option>
     </select><br><br>
 
-    <input type="submit" value="Search">
+    <button type="submit">Search</button>
   </form>
+
+  <a href="account">My Account</a>
+  
 {% endblock %}
