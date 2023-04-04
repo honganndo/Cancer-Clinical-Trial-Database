@@ -6,13 +6,6 @@
 
 {% block content %}
   <body>
-    <form method="get" action="/results">
-      <input type="submit" value="Back to Results">
-    </form>
-
-    <form method="get" action="/save">
-      <input type="submit" value="Save Trial">
-    </form>
 
     {% for result in results %}
     <h1>{{ result.trial_name }}</h1>
