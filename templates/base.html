@@ -1,0 +1,23 @@
+<!doctype html>
+<title>{% block title %}{% endblock %} - Flaskr</title>
+<nav>
+  <h1><u>Cancer Clinical Trial Database</u></h1>
+  {% if g.user %}
+    <span>User: {{ g.user['user_name'] }}</span>
+    <br>
+    <a href="logout">Log Out</a>
+  {% else %}
+    <a href="register">Register</a>
+    <br>
+    <a href="login">Log In</a>
+  {% endif %}
+</nav>
+<section class="content">
+  <header>
+    {% block header %}{% endblock %}
+  </header>
+  {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+  {% block content %}{% endblock %}
+</section>

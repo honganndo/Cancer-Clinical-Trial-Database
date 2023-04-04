@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Cancer Clinical Trial Search Results</title>
+    <title>Search Results</title>
 </head>
 <body>
   <h1>Cancer Clinical Trial Search Results</h1>
@@ -25,7 +24,7 @@
         <option value="not_recruiting">Not yet recruiting</option>
         <option value="recruiting">Actively recruiting</option>
         <option value="completed">Completed</option>
-      </select><br><br>
+      </select><br>
 
       <label for="phase">Phase:</label>
       <select id="phase" name="phase">
@@ -35,33 +34,33 @@
         <option value="2">Phase 2</option>
         <option value="3">Phase 3</option>
         <option value="4">Phase 4</option>
-      </select><br><br>
+      </select><br>
 
       <label for="start_date">Start Date:</label>
-      <input type="date" id="start_date" name="start_date"><br><br>
+      <input type="date" id="start_date" name="start_date"><br>
 
       <label for="end_date">End Date:</label>
-      <input type="date" id="end_date" name="end_date"><br><br>
+      <input type="date" id="end_date" name="end_date"><br>
 
       <label for="low_age">Low Age Range:</label>
-      <input type="number" id="low_age" name="low_age"><br><br>
+      <input type="number" id="low_age" name="low_age"><br>
 
       <label for="high_age">High Age Range:</label>
-      <input type="number" id="high_age" name="high_age"><br><br>
+      <input type="number" id="high_age" name="high_age"><br>
 
       <label for="sex">Sex:</label>
       <select id="sex" name="sex">
         <option value="">Any Sex</option>
         <option value="M">Male</option>
         <option value="F">Female</option>
-      </select><br><br>
+      </select><br>
 
       <label for="type">Type:</label>
       <select id="type" name="type">
         <option value="">Any Type</option>
         <option value="interventional">Interventional</option>
         <option value="observational">Observational</option>
-      </select><br><br>
+      </select><br>
 
       <label for="location">Location:</label>
       <select id="location" name="location">
@@ -70,68 +69,41 @@
         <option value="losangeles">Los Angeles</option>
         <option value="chicago">Chicago</option>
         <option value="houston">Houston</option>
-      </select><br><br>
+      </select><br>
 
       <input type="submit" value="Apply Filters">
     </form>
   </div>
 
-  <br>
 
-  <table border="1">
-    <thead>
-      <tr>
-        <th>Row</th>
-        <th>Trial Name</th>
-        <th>Description</th>
-        <th>Status</th>
-        <th>Phase</th>
-        <th>Type</th>
-        <th>Condition</th>
-        <th>Intervention</th>
-        <th>Age</th>
-        <th>Sex</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>1</td>
-        <td>Trial 1</td>
-        <td>Description of Trial 1</td>
-        <td>Actively Recruiting</td>
-        <td>Phase 3</td>
-        <td>Interventional</td>
-        <td>Condition 1</td>
-        <td>Intervention 1</td>
-        <td>18-65</td>
-        <td>Both</td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>Trial 2</td>
-        <td>Description of Trial 2</td>
-        <td>Not Recruiting</td>
-        <td>Phase 1</td>
-        <td>Interventional</td>
-        <td>Condition 2</td>
-        <td>Intervention 2</td>
-        <td>30-75</td>
-        <td>Male</td>
-      </tr>
-      <tr>
-        <td>3</td>
-        <td>Trial 3</td>
-        <td>Description of Trial 3</td>
-        <td>Completed</td>
-        <td>Phase 2</td>
-        <td>Observational</td>
-        <td>Condition 3</td>
-        <td>N/A</td>
-        <td>18+</td>
-        <td>Female</td>
-      </tr>
-    </tbody>
-  </table>
+  <h1>Search Results</h1>
+    <p>Location: {{ location }}</p>
+    <p>Status: {{ status }}</p>
+    <p>Condition: {{ condition }}</p>
+    <table border="1">
+      <thead>
+            <tr>
+                <th> Trial Name </th>
+                <th> Description </th>
+                <th> Status </th>
+                <th> Number of Patients </th>
+                <th> Type </th>
+                <th> Phase </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+                <tr>
+                    <td><a href="{{ url_for('trialpage', trial_id=result[0]) }}">{{ result[1] }}</a></td>
+                    <td>{{ result[2] }}</td>
+                    <td>{{ result[3] }}</td>
+                    <td>{{ result[4] }}</td>
+                    <td>{{ result[5] }}</td>
+                    <td>{{ result[6] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
   <br>
 

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Results</title>
+</head>
+<body>
+    <h1>Search Results</h1>
+    <p>Location: {{ location }}</p>
+    <p>Status: {{ status }}</p>
+    <p>Condition: {{ condition }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th> Trial ID </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+                <tr>
+                    <td>{{ result[0] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

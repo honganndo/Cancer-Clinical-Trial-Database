@@ -1,12 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Error Page</title>
-</head>
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Cancer Clinical Trial Database{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
 <body>
-	<h1>Error: Invalid Search Term</h1>
-	<p>The search term you entered could not be found in our database. Please try a different search term.</p>
-	<button onclick="window.location.href='homepage.html'">Go back to homepage</button>
+  <h1>Error: Invalid Search Term</h1>
+  <p>The search term you entered could not be found in our database. Please try a different search term.</p>
+    <a href="homepage">Back to Home</a>
 </body>
-</html>
+{% endblock %}

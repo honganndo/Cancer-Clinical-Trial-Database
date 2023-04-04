@@ -1,38 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>User Account</title>
-</head>
-<body>
-	<h1>User Account</h1>
-	
-	<h2>Profile Information</h2>
-	<p>Username: <span id="username"></span></p>
-	<p>Password: <span id="password"></span></p>
-	<p>Email: <span id="email"></span></p>
-	<p>Phone Number: <span id="phone"></span></p>
+{% extends 'base.html' %}
 
-	<h2>Saved Trials</h2>
+{% block header %}
+  <h1>{% block title %}Cancer Clinical Trial Database{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <body>
+    <a href="/">Back to Home</a>
+
+    <h1>User Account</h1>
+    
+    <h2>Profile Information</h2>
+    <p>Username: <span id="username"></span></p>
+    <p>Password: <span id="password"></span></p>
+    <p>Email: <span id="email"></span></p>
+    <p>Phone Number: <span id="phone"></span></p>
+
+    <h2>Saved Trials</h2>
     <table border="1">
-		<thead>
-			<tr>
-				<th>Row</th>
-				<th>Trial Name</th>
-				<th>Description</th>
-				<th>Status</th>
-				<th>Phase</th>
-				<th>Type</th>
-				<th>Condition</th>
-				<th>Intervention</th>
-				<th>Age</th>
-				<th>Sex</th>
-				<th>Location</th>
-			</tr>
-		</thead>
-		<tbody>
-			<!-- Insert saved trials here -->
-		</tbody>
-	</table>
-</body>
-</html>
+      <thead>
+        <tr>
+          <th>Row</th>
+          <th>Trial Name</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Phase</th>
+          <th>Type</th>
+          <th>Condition</th>
+          <th>Intervention</th>
+          <th>Age</th>
+          <th>Sex</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Insert saved trials here -->
+      </tbody>
+    </table>
+  </body>
+{% endblock %}
