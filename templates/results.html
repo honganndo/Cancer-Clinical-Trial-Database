@@ -11,10 +11,12 @@
     <input type="text" id="condition" name="condition">
     <input type="submit" value="Search">
 
+
   <br>
 
   <div>
     <h2>Refine Your Search</h2>
+
 
       <label for="status">Status:</label>
         <select id="status" name="status">
@@ -27,11 +29,13 @@
       <label for="phase">Phase:</label>
       <select id="phase" name="phase">
         <option value="">Any Phase</option>
+
         <option value="Early Phase">Early Phase</option>
         <option value="Phase 1">Phase 1</option>
         <option value="Phase 2">Phase 2</option>
         <option value="Phase 3">Phase 3</option>
         <option value="Phase 4">Phase 4</option>
+
       </select><br>
 
       <label for="type">Type:</label>
@@ -66,6 +70,8 @@
     <p>Phase: {{ phase }}</p>
     <p>Type: {{ type }}</p>
     <p>Sex: {{ sex }}</p>
+      
+
     <table border="1">
       <thead>
             <tr>

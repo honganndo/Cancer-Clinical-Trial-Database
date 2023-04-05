@@ -194,12 +194,15 @@ def homepage():
         condition = request.form.get('condition')
         return redirect(url_for('results', location=location, status=status, condition=condition))
 
+
     return render_template("homepage.html", locations=locations)
+
 
 
 @app.route('/results', methods=['GET', 'POST'])
 @login_required
 def results():
+
     with engine.connect() as connection:
         location_query = "SELECT location_name FROM location"
         result = connection.execute(text(location_query))
@@ -211,6 +214,7 @@ def results():
     phase = request.form.get('phase')
     type = request.form.get('type')
     sex = request.form.get('sex')
+
 
     with engine.connect() as connection:
         results_query = "SELECT * FROM clinical_trials"
@@ -226,6 +230,7 @@ def results():
             input.append(
                 "UPPER(trial_name) LIKE UPPER('%{}%') OR UPPER(description) LIKE UPPER('%{}%')".format(condition,
                                                                                                        condition))
+
         if sex:
             input.append("UPPER(eligibility.sex) = UPPER('{}')".format(sex))
             results_query += " JOIN eligibility ON clinical_trials.eligibility_id = eligibility.eligibility_id"
@@ -234,16 +239,19 @@ def results():
         if type:
             input.append("UPPER(type) = UPPER('{}')".format(type))
 
+
         if input:
             results_query += " WHERE (" + ") AND (".join(input) + ")"
 
         results = connection.execute(text(results_query)).fetchall()
+
 
     return render_template("results.html", condition=condition, status=status, location=location, results = results, locations = locations, phase = phase, type = type, sex = sex)
 
 @app.route('/trialpage/<int:trial_id>')
 @login_required
 def trialpage(trial_id, duplicatemessage = None, deletemessage = None):
+
     with engine.connect() as connection:
         results_query = "SELECT * FROM clinical_trials clin \
                         JOIN eligibility elig ON clin.eligibility_id = elig.eligibility_id \
@@ -268,7 +276,9 @@ def trialpage(trial_id, duplicatemessage = None, deletemessage = None):
 
         sponsors = connection.execute(text(sponsors_query))
 
+
     return render_template("trialpage.html", results = results, sponsors = sponsors, locations = locations, duplicatemessage = duplicatemessage, deletemessage = deletemessage)
+
 
 @app.route('/invalidsearch')
 @login_required
@@ -283,6 +293,7 @@ def account():
                         FROM user_account \
                         WHERE user_name = '{}'".format(session['name'])
 
+
         user = connection.execute(text(user_query))
 
         results_query = "SELECT * \
@@ -295,7 +306,6 @@ def account():
 
     return render_template("account.html", results = results, user = user)
 
-
 @app.route('/saves/add', methods=['POST'])
 @login_required
 def add_save():
@@ -303,6 +313,7 @@ def add_save():
     institution_query = "SELECT institution_name FROM sponsors WHERE nct = {}".format(trial_id)
     institution_row = g.conn.execute(text(institution_query)).fetchone()
     institution = institution_row[0]
+
 
     save_query = "SELECT * FROM saves WHERE user_name = '{}' AND nct = '{}'".format(session['name'], trial_id)
     save_row = g.conn.execute(text(save_query)).fetchone()
@@ -339,6 +350,7 @@ def remove_save():
     g.conn.commit()
 
     return redirect(url_for('trialpage', trial_id = trial_id, deletemessage = deletemessage))
+
 
 
 if __name__ == "__main__":
