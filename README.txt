@@ -3,7 +3,7 @@ Hong-Ann Do
 Peter Ma
 
 PostgreSQL account: htd2109 (34.148.107.47)
-URL: http://34.138.130.99:8111/
+URL: http://34.23.23.58:8111/
 
 The cancer clinical database created allows for users to to search cancer
 clinical trials based on the condition/keyword. Users initially can select a
