@@ -194,15 +194,27 @@ def homepage():
         condition = request.form.get('condition')
         return redirect(url_for('results', location=location, status=status, condition=condition))
 
+
     return render_template("homepage.html", locations=locations)
+
 
 
 @app.route('/results', methods=['GET', 'POST'])
 @login_required
 def results():
+
+    with engine.connect() as connection:
+        location_query = "SELECT location_name FROM location"
+        result = connection.execute(text(location_query))
+        locations = [row[0] for row in result]
+
     location = request.form.get('location')
     status = request.form.get('status')
     condition = request.form.get('condition')
+    phase = request.form.get('phase')
+    type = request.form.get('type')
+    sex = request.form.get('sex')
+
 
     with engine.connect() as connection:
         results_query = "SELECT * FROM clinical_trials"
@@ -218,16 +230,28 @@ def results():
             input.append(
                 "UPPER(trial_name) LIKE UPPER('%{}%') OR UPPER(description) LIKE UPPER('%{}%')".format(condition,
                                                                                                        condition))
+
+        if sex:
+            input.append("UPPER(eligibility.sex) = UPPER('{}')".format(sex))
+            results_query += " JOIN eligibility ON clinical_trials.eligibility_id = eligibility.eligibility_id"
+        if phase:
+            input.append("UPPER(phase) = UPPER('{}')".format(phase))
+        if type:
+            input.append("UPPER(type) = UPPER('{}')".format(type))
+
+
         if input:
             results_query += " WHERE (" + ") AND (".join(input) + ")"
 
         results = connection.execute(text(results_query)).fetchall()
 
-    return render_template("results.html", condition=condition, status=status, location=location, results = results)
+
+    return render_template("results.html", condition=condition, status=status, location=location, results = results, locations = locations, phase = phase, type = type, sex = sex)
 
 @app.route('/trialpage/<int:trial_id>')
 @login_required
-def trialpage(trial_id):
+def trialpage(trial_id, duplicatemessage = None, deletemessage = None):
+
     with engine.connect() as connection:
         results_query = "SELECT * FROM clinical_trials clin \
                         JOIN eligibility elig ON clin.eligibility_id = elig.eligibility_id \
@@ -252,7 +276,9 @@ def trialpage(trial_id):
 
         sponsors = connection.execute(text(sponsors_query))
 
-    return render_template("trialpage.html", results = results, sponsors = sponsors, locations = locations)
+
+    return render_template("trialpage.html", results = results, sponsors = sponsors, locations = locations, duplicatemessage = duplicatemessage, deletemessage = deletemessage)
+
 
 @app.route('/invalidsearch')
 @login_required
@@ -267,6 +293,7 @@ def account():
                         FROM user_account \
                         WHERE user_name = '{}'".format(session['name'])
 
+
         user = connection.execute(text(user_query))
 
         results_query = "SELECT * \
@@ -279,7 +306,6 @@ def account():
 
     return render_template("account.html", results = results, user = user)
 
-
 @app.route('/saves/add', methods=['POST'])
 @login_required
 def add_save():
@@ -288,21 +314,43 @@ def add_save():
     institution_row = g.conn.execute(text(institution_query)).fetchone()
     institution = institution_row[0]
 
-    params = {}
-    params["username"] = session['name']
-    params["nct"] = trial_id
-    params["institution"] = institution
 
-    g.conn.execute(text("INSERT INTO saves (user_name, nct, institution_name) VALUES (:username, :nct, :institution)"),
-                           params)
+    save_query = "SELECT * FROM saves WHERE user_name = '{}' AND nct = '{}'".format(session['name'], trial_id)
+    save_row = g.conn.execute(text(save_query)).fetchone()
+
+    duplicatemessage = "Trial saved"
+    if save_row:
+        duplicatemessage = "Trial already saved"
+        return redirect(url_for('trialpage', trial_id=trial_id, duplicatemessage = duplicatemessage))
+
+    params = {"user_name": session['name'], "nct": trial_id, "institution_name": institution}
+    g.conn.execute(text("INSERT INTO saves (user_name,nct, institution_name) VALUES (:user_name, :nct, :institution_name)"), params)
     g.conn.commit()
 
-    '''TO DO
-    favorited status on page
-    unfavorite button
-    prevent error when already favorited or unfavorited'''
+    return redirect(url_for('trialpage', trial_id = trial_id, duplicatemessage = duplicatemessage))
 
-    return redirect(url_for('trialpage', trial_id = trial_id))
+@app.route('/saves/remove', methods=['POST'])
+@login_required
+def remove_save():
+    trial_id = request.form['trial_id']
+    institution_query = "SELECT institution_name FROM sponsors WHERE nct = {}".format(trial_id)
+    institution_row = g.conn.execute(text(institution_query)).fetchone()
+    institution = institution_row[0]
+
+    save_query = "SELECT * FROM saves WHERE user_name = '{}' AND nct = '{}'".format(session['name'], trial_id)
+    save_row = g.conn.execute(text(save_query)).fetchone()
+
+    deletemessage = "Trial removed from saved trials"
+    if not save_row:
+        deletemessage = "Trial already unfavorited"
+        return redirect(url_for('trialpage', trial_id=trial_id, deletemessage = deletemessage))
+
+    params = {"user_name": session['name'], "nct": trial_id, "institution_name": institution}
+    g.conn.execute(text("DELETE FROM saves WHERE user_name = :user_name AND nct = :nct AND institution_name = :institution_name"), params)
+    g.conn.commit()
+
+    return redirect(url_for('trialpage', trial_id = trial_id, deletemessage = deletemessage))
+
 
 
 if __name__ == "__main__":
