@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Cancer Clinical Trial Search Database</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-  <h1>Cancer Clinical Trial Search Database</h1>
+{% block header %}
+  <h1>{% block title %}Search{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
 
   <form method="POST" action="{{ url_for('results') }}">
     <label for="condition">Condition/Keyword:</label>
     <input type="text" id="condition" name="condition" placeholder="Search by keyword"><br><br>
-    <br>
     <label for="location">Location:</label>
     <select id="location" name="location" >
       <option value="">--Select Location--</option>
@@ -19,7 +16,6 @@
             <option value="{{ location }}">{{ location }}</option>
         {% endfor %}
     </select>
-    <br>
     <label for="status">Status:</label>
     <select id="status" name="status">
       <option value="all">All</option>
@@ -29,11 +25,5 @@
     </select><br><br>
 
     <button type="submit">Search</button>
-  </form>
-
-  <br>
-
-  <a href="account">My Account</a>
-
-</body>
-</html>
+  </form>  
+{% endblock %}

@@ -1,15 +1,73 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Search Results</title>
-</head>
-<body>
-    <h1>Search Results</h1>
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Search{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+  <form method="POST" action="{{ url_for('results') }}">
+    <label for="condition">Search for another condition/keyword:</label>
+    <input type="text" id="condition" name="condition">
+    <input type="submit" value="Search">
+
+  <br>
+
+  <div>
+    <h2>Refine Your Search</h2>
+
+      <label for="status">Status:</label>
+        <select id="status" name="status">
+      <option value="all">All</option>
+      <option value="actively recruiting">Actively Recruiting</option>
+      <option value="not yet recruiting">Not Recruiting</option>
+      <option value="completed">Completed</option>
+        </select><br>
+
+      <label for="phase">Phase:</label>
+      <select id="phase" name="phase">
+        <option value="">Any Phase</option>
+        <option value="Early Phase">Early Phase</option>
+        <option value="Phase 1">Phase 1</option>
+        <option value="Phase 2">Phase 2</option>
+        <option value="Phase 3">Phase 3</option>
+        <option value="Phase 4">Phase 4</option>
+      </select><br>
+
+      <label for="type">Type:</label>
+      <select id="type" name="type">
+        <option value="">Any Type</option>
+        <option value="interventional">Interventional</option>
+        <option value="observational">Observational</option>
+      </select><br>
+
+      <label for="sex">Sex:</label>
+      <select id="sex" name="sex">
+        <option value="">Any</option>
+        <option value="male">male</option>
+        <option value="female">female</option>
+      </select><br>
+
+      <label for="location">Location:</label>
+        <select id="location" name="location" >
+      <option value="">--Select Location--</option>
+        {% for location in locations %}
+            <option value="{{ location }}">{{ location }}</option>
+        {% endfor %}
+        </select>
+      <input type="submit" value="Apply Filters">
+  </div>
+  </form>
+
+  <h1>Search Results</h1>
+    <p>Keyword Search: {{ condition }}</p>
     <p>Location: {{ location }}</p>
     <p>Status: {{ status }}</p>
-    <p>Condition: {{ condition }}</p>
-    <table>
-        <thead>
+    <p>Phase: {{ phase }}</p>
+    <p>Type: {{ type }}</p>
+    <p>Sex: {{ sex }}</p>
+    <table border="1">
+      <thead>
             <tr>
                 <th> Trial Name </th>
                 <th> Description </th>
@@ -32,5 +90,5 @@
             {% endfor %}
         </tbody>
     </table>
-</body>
-</html>
+
+  {% endblock %}

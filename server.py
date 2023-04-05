@@ -11,11 +11,15 @@ import os
 #import psycopg2
 # accessible as a variable in index.html:
 from sqlalchemy import *
+from sqlalchemy import exc
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, request, render_template, g, redirect, Response, flash, url_for
+from flask import session
+import functools
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
+app.secret_key = b'8b13a355666c9c10f40a910ee860189d327837989500d00c9dbf2849f56af334'
 
 #
 # The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
@@ -43,19 +47,18 @@ engine = create_engine(DATABASEURI)
 # Example of running queries in your database
 # Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
 #
-with engine.connect() as conn:
-    create_table_command = """
-	CREATE TABLE IF NOT EXISTS test (
-		id serial,
-		name text
-	)
-	"""
-    res = conn.execute(text(create_table_command))
-   # insert_table_command = """INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace')"""
-  #  res = conn.execute(text(insert_table_command))
-    # you need to commit for create, insert, update queries to reflect
-    conn.commit()
+# with engine.connect() as conn:
+#     pass
 
+def login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect('/login')
+
+        return view(**kwargs)
+
+    return wrapped_view
 
 @app.before_request
 def before_request():
@@ -71,8 +74,18 @@ def before_request():
         print("uh oh, problem connecting to database")
         import traceback;
         traceback.print_exc()
-        g.conn = None
-
+        g.conn = None     
+    else:
+        session_name = session.get('name')
+        
+        if session_name is None:
+            g.user = None
+        else:
+            params = {}
+            params["param_name"] = session_name
+            g.user = g.conn.execute(text(
+                'SELECT * FROM user_account WHERE user_name = (:param_name)'), params
+            ).fetchone()
 
 @app.teardown_request
 def teardown_request(exception):
@@ -99,109 +112,237 @@ def teardown_request(exception):
 # see for routing: https://flask.palletsprojects.com/en/1.1.x/quickstart/#routing
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
 
+@app.route('/register', methods=('GET', 'POST'))
+def login_create():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        phone = request.form['phone number']
+        email = request.form['email']
+        error = None
+
+        if not username:
+            error = 'Username is required.'
+        elif not password:
+            error = 'Password is required.'
+    
+        if error is None:
+            try:
+                # insert_table_command = "INSERT INTO user_account(user_name, user_phone_number, user_email, user_password) VALUES ({u}, {p}, {e}, {pa})".format(u = username, p = phone, e = email, pa = password)
+                params = {}
+                params["new_name"] = username
+                params["new_password"] = password
+                params["new_phone"] = phone
+                params["new_email"] = email
+                
+                g.conn.execute(text('INSERT INTO user_account(user_name, user_phone_number, user_email, user_password) \
+                                    VALUES (:new_name, :new_phone, :new_email, :new_password)'), params)
+                g.conn.commit()   
+            except exc.IntegrityError:
+                error = f"User {username} is already registered."
+            else:
+                return redirect("/login")
+
+        flash(error)
+
+    return render_template('register.html')
+
+@app.route('/login', methods=('GET', 'POST'))
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        error = None
+        params = {}
+        params["param_name"] = username
+        user = g.conn.execute(text(
+            'SELECT * FROM user_account WHERE user_name = (:param_name)'), params
+        ).fetchone()
+
+        if user is None:
+            error = 'Incorrect username.'
+        elif user[3] != password:
+            error = 'Incorrect password.'
+
+        if error is None:
+            session.clear()
+            session['name'] = user[0]
+            return redirect('/')
+
+        flash(error)
+
+    return render_template('/login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')
+    
+
 #Homepage
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
+@login_required
 def homepage():
-    """
-    request is a special object that Flask provides to access web request information:
-    request.method:   "GET" or "POST"
-    request.form:     if the browser submitted a form, this contains the data in the form
-    request.args:     dictionary of URL arguments, e.g., {a:1, b:2} for http://localhost?a=1&b=2
-    See its API: https://flask.palletsprojects.com/en/1.1.x/api/#incoming-request-data
-    """
+    with engine.connect() as connection:
+        location_query = "SELECT location_name FROM location"
+        result = connection.execute(text(location_query))
+        locations = [row[0] for row in result]
 
-    # DEBUG: this is debugging code to see what request looks like
-    print(request.args)
+    if request.method == 'POST':
+        location = request.form.get('location')
+        status = request.form.get('status')
+        condition = request.form.get('condition')
+        return redirect(url_for('results', location=location, status=status, condition=condition))
 
-    #
-    # example of a database query
-    #
-    select_query = "SELECT name from test"
-    cursor = g.conn.execute(text(select_query))
-    names = []
-    for result in cursor:
-        names.append(result[0])
-    cursor.close()
-
-    #
-    # Flask uses Jinja templates, which is an extension to HTML where you can
-    # pass data to a template and dynamically generate HTML based on the data
-    # (you can think of it as simple PHP)
-    # documentation: https://realpython.com/primer-on-jinja-templating/
-    #
-    # You can see an example template in templates/index.html
-    #
-    # context are the variables that are passed to the template.
-    # for example, "data" key in the context variable defined below will be
-    # accessible as a variable in index.html:
-    #
-    #     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
-    #     <div>{{data}}</div>
-    #
-    #     # creates a <div> tag for each element in data
-    #     # will print:
-    #     #
-    #     #   <div>grace hopper</div>
-    #     #   <div>alan turing</div>
-    #     #   <div>ada lovelace</div>
-    #     #
-    #     {% for n in data %}
-    #     <div>{{n}}</div>
-    #     {% endfor %}
-    #
-    context = dict(data=names)
-
-    #
-    # render_template looks in the templates/ folder for files.
-    # for example, the below file reads template/index.html
-    #
-    return render_template("homepage.html", **context)
+    return render_template("homepage.html", locations=locations)
 
 
-@app.route('/results')
+@app.route('/results', methods=['GET', 'POST'])
+@login_required
 def results():
-    return render_template("results.html")
+    with engine.connect() as connection:
+        location_query = "SELECT location_name FROM location"
+        result = connection.execute(text(location_query))
+        locations = [row[0] for row in result]
 
-@app.route('/trialpage')
-def trialpage():
-    return render_template("trialpage.html")
+    location = request.form.get('location')
+    status = request.form.get('status')
+    condition = request.form.get('condition')
+    phase = request.form.get('phase')
+    type = request.form.get('type')
+    sex = request.form.get('sex')
+
+    with engine.connect() as connection:
+        results_query = "SELECT * FROM clinical_trials"
+        input = []
+
+        if location:
+            input.append("UPPER(location.location_name) = UPPER('{}')".format(location))
+            results_query += " JOIN takes_place ON clinical_trials.nct = takes_place.nct"
+            results_query += " JOIN location ON takes_place.location_name = location.location_name"
+        if status != 'all':
+            input.append("UPPER(status) = UPPER('{}')".format(status))
+        if condition:
+            input.append(
+                "UPPER(trial_name) LIKE UPPER('%{}%') OR UPPER(description) LIKE UPPER('%{}%')".format(condition,
+                                                                                                       condition))
+        if sex:
+            input.append("UPPER(eligibility.sex) = UPPER('{}')".format(sex))
+            results_query += " JOIN eligibility ON clinical_trials.eligibility_id = eligibility.eligibility_id"
+        if phase:
+            input.append("UPPER(phase) = UPPER('{}')".format(phase))
+        if type:
+            input.append("UPPER(type) = UPPER('{}')".format(type))
+
+        if input:
+            results_query += " WHERE (" + ") AND (".join(input) + ")"
+
+        results = connection.execute(text(results_query)).fetchall()
+
+    return render_template("results.html", condition=condition, status=status, location=location, results = results, locations = locations, phase = phase, type = type, sex = sex)
+
+@app.route('/trialpage/<int:trial_id>')
+@login_required
+def trialpage(trial_id, duplicatemessage = None, deletemessage = None):
+    with engine.connect() as connection:
+        results_query = "SELECT * FROM clinical_trials clin \
+                        JOIN eligibility elig ON clin.eligibility_id = elig.eligibility_id \
+                        JOIN study stud ON stud.nct = clin.nct \
+                        JOIN condition con ON con.cancer_type = stud.cancer_type \
+                        JOIN intervention int ON int.treatment = stud.treatment AND int.treatment_type = stud.treatment_type \
+                        WHERE clin.nct = '{}'".format(trial_id)
+
+        results = connection.execute(text(results_query))
+
+        locations_query = "SELECT * FROM clinical_trials clin \
+                        JOIN takes_place tp ON tp.nct = clin.nct \
+                        JOIN location loc ON loc.location_name = tp.location_name \
+                        WHERE clin.nct = '{}'".format(trial_id)
+
+        locations = connection.execute(text(locations_query))
+
+        sponsors_query = "SELECT * FROM clinical_trials clin \
+                        JOIN sponsors spon ON spon.nct = clin.nct \
+                        JOIN institution inst ON inst.institution_name = spon.institution_name \
+                        WHERE clin.nct = '{}'".format(trial_id)
+
+        sponsors = connection.execute(text(sponsors_query))
+
+    return render_template("trialpage.html", results = results, sponsors = sponsors, locations = locations, duplicatemessage = duplicatemessage, deletemessage = deletemessage)
 
 @app.route('/invalidsearch')
+@login_required
 def invalidsearch():
     return render_template("invalidsearch.html")
 
-@app.route('/login_create')
-def login_create():
-    return render_template("login_create.html")
-
 @app.route('/account')
+@login_required
 def account():
-    return render_template("account.html")
+    with engine.connect() as connection:
+        user_query = "SELECT * \
+                        FROM user_account \
+                        WHERE user_name = '{}'".format(session['name'])
+
+        user = connection.execute(text(user_query))
+
+        results_query = "SELECT * \
+                        FROM clinical_trials clin \
+                        JOIN saves sav ON sav.nct = clin.nct\
+                        JOIN user_account ua ON ua.user_name = sav.user_name\
+                        WHERE ua.user_name = '{}'".format(session['name'])
+
+        results = connection.execute(text(results_query))
+
+    return render_template("account.html", results = results, user = user)
 
 
-# Example of adding new data to the database
-@app.route('/add', methods=['POST'])
-def add():
-    # accessing form inputs from user
-    name = request.form['name']
+@app.route('/saves/add', methods=['POST'])
+@login_required
+def add_save():
+    trial_id = request.form['trial_id']
+    institution_query = "SELECT institution_name FROM sponsors WHERE nct = {}".format(trial_id)
+    institution_row = g.conn.execute(text(institution_query)).fetchone()
+    institution = institution_row[0]
 
-    # passing params in for each variable into query
-    params = {}
-    params["new_name"] = name
-    g.conn.execute(text('INSERT INTO test(name) VALUES (:new_name)'), params)
+    save_query = "SELECT * FROM saves WHERE user_name = '{}' AND nct = '{}'".format(session['name'], trial_id)
+    save_row = g.conn.execute(text(save_query)).fetchone()
+
+    duplicatemessage = "Trial saved"
+    if save_row:
+        duplicatemessage = "Trial already saved"
+        return redirect(url_for('trialpage', trial_id=trial_id, duplicatemessage = duplicatemessage))
+
+    params = {"user_name": session['name'], "nct": trial_id, "institution_name": institution}
+    g.conn.execute(text("INSERT INTO saves (user_name,nct, institution_name) VALUES (:user_name, :nct, :institution_name)"), params)
     g.conn.commit()
-    return redirect('/')
 
+    return redirect(url_for('trialpage', trial_id = trial_id, duplicatemessage = duplicatemessage))
 
-@app.route('/login')
-def login():
-    abort(401)
-    this_is_never_executed()
+@app.route('/saves/remove', methods=['POST'])
+@login_required
+def remove_save():
+    trial_id = request.form['trial_id']
+    institution_query = "SELECT institution_name FROM sponsors WHERE nct = {}".format(trial_id)
+    institution_row = g.conn.execute(text(institution_query)).fetchone()
+    institution = institution_row[0]
+
+    save_query = "SELECT * FROM saves WHERE user_name = '{}' AND nct = '{}'".format(session['name'], trial_id)
+    save_row = g.conn.execute(text(save_query)).fetchone()
+
+    deletemessage = "Trial removed from saved trials"
+    if not save_row:
+        deletemessage = "Trial already unfavorited"
+        return redirect(url_for('trialpage', trial_id=trial_id, deletemessage = deletemessage))
+
+    params = {"user_name": session['name'], "nct": trial_id, "institution_name": institution}
+    g.conn.execute(text("DELETE FROM saves WHERE user_name = :user_name AND nct = :nct AND institution_name = :institution_name"), params)
+    g.conn.commit()
+
+    return redirect(url_for('trialpage', trial_id = trial_id, deletemessage = deletemessage))
 
 
 if __name__ == "__main__":
     import click
-
 
     @click.command()
     @click.option('--debug', is_flag=True)

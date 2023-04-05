@@ -1,38 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>User Account</title>
-</head>
-<body>
-	<h1>User Account</h1>
-	
-	<h2>Profile Information</h2>
-	<p>Username: <span id="username"></span></p>
-	<p>Password: <span id="password"></span></p>
-	<p>Email: <span id="email"></span></p>
-	<p>Phone Number: <span id="phone"></span></p>
+{% extends 'base.html' %}
 
-	<h2>Saved Trials</h2>
+{% block header %}
+  <h1>{% block title %}User Account{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <body>
+    {% for u in user %}
+      <h3>Profile Information</h3>
+      <p>Username: {{ u[0] }}</p>
+      <p>Phone Number: {{ u[1] }}</p>
+      <p>Email: {{ u[2] }}</p>
+    {% endfor %}
+
+    <h3>Saved Trials</h3>
     <table border="1">
-		<thead>
-			<tr>
-				<th>Row</th>
-				<th>Trial Name</th>
-				<th>Description</th>
-				<th>Status</th>
-				<th>Phase</th>
-				<th>Type</th>
-				<th>Condition</th>
-				<th>Intervention</th>
-				<th>Age</th>
-				<th>Sex</th>
-				<th>Location</th>
-			</tr>
-		</thead>
-		<tbody>
-			<!-- Insert saved trials here -->
-		</tbody>
-	</table>
-</body>
-</html>
+      <thead>
+            <tr>
+                <th> Trial Name </th>
+                <th> Description </th>
+                <th> Status </th>
+                <th> Number of Patients </th>
+                <th> Type </th>
+                <th> Phase </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+                <tr>
+                    <td><a href="{{ url_for('trialpage', trial_id=result[0]) }}">{{ result[1] }}</a></td>
+                    <td>{{ result[2] }}</td>
+                    <td>{{ result[3] }}</td>
+                    <td>{{ result[4] }}</td>
+                    <td>{{ result[5] }}</td>
+                    <td>{{ result[6] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </body>
+{% endblock %}
