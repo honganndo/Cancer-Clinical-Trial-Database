@@ -12,6 +12,7 @@ Created by Ann and Peter as part of a project for the introduction to databases 
 
 ## Features
 Entity–relationship model:
+![Cancer Clinical Trial Database ER diagram](./images/er.png "Cancer Clinical Trial Database ER diagram")
 
 Database queries:
 Various parameters and inputs from the search bar and dropdown menu options are combined to form a valid database query. The query operates across multiple data tables to return the relevant information in the results page. 
