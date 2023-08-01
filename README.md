@@ -14,8 +14,17 @@ Cancer is one of the deadliest diseases in the world and yet there is still no t
 **Entity–relationship model**
 ![Cancer Clinical Trial Database ER diagram](./images/er-diagram.png "Cancer Clinical Trial Database ER diagram")
 
+**Web application**
+- Web server implemented using Flask to handle web requests and database connection. HTML is dynamically generated using Jinja templates.
+
 **Database queries**
 - Various parameters and inputs from the search bar and dropdown menu options are combined to form a valid database query. The query operates across multiple data tables to return the relevant information in the results page. 
 
 **User accounts**
 - User accounts can be created to store clinical trials accross web sessions. The register/login page allows for creation of new users (ensuring the integrity constraint of no duplicate users) as well as validation of username and password of returning users.
+
+**Packages Required**
+- flask
+- psycopg2
+- sqlalchemy
+- click

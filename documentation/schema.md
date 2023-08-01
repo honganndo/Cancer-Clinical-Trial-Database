@@ -109,10 +109,8 @@ CREATE TABLE user_account (
 CREATE TABLE saves (
 	user_name varchar(30),
 	NCT numeric(8, 0),
-	institution_name text,
-	PRIMARY KEY (user_name, NCT, institution_name),
+	PRIMARY KEY (user_name, NCT),
 	FOREIGN KEY (user_name) REFERENCES user_account(user_name) ON DELETE CASCADE,
-	FOREIGN KEY (NCT) REFERENCES clinical_trials(NCT) ON DELETE CASCADE,
-	FOREIGN KEY (institution_name ) REFERENCES institution(institution_name ) ON DELETE CASCADE
+	FOREIGN KEY (NCT) REFERENCES clinical_trials(NCT) ON DELETE CASCADE
 );
 ```
