@@ -6,17 +6,13 @@
 
 {% block content %}
   <body>
-
     {% for result in results %}
     <h1>{{ result.trial_name }}</h1>
-
 
     <form action="{{ url_for('add_save') }}" method="POST">
       <input type="hidden" name="trial_id" value="{{ result.nct }}">
       <button type="submit">Add to Favorites</button>
     </form>
-
-    <br>
 
     <form action="{{ url_for('remove_save') }}" method="POST">
       <input type="hidden" name="trial_id" value="{{ result.nct }}">
@@ -28,27 +24,24 @@
 
     <h2>Basic Information</h2>
     <ul>
-        <li>NCT Number: {{ result.nct }}</li>
-        <li>Status: {{ result.status }}</li>
-        <li>Number of Patients: {{ result.number_of_patients }}</li>
-        <li>Type: {{ result.type }}</li>
-        <li>Phase: {{ result.phase }}</li>
-        <li>Start Date: {{ result.start_date }}</li>
-        <li>End Date: {{ result.end_date }}</li>
+      <li>NCT Number: {{ result.nct }}</li>
+      <li>Status: {{ result.status }}</li>
+      <li>Number of Patients: {{ result.number_of_patients }}</li>
+      <li>Type: {{ result.type }}</li>
+      <li>Phase: {{ result.phase }}</li>
+      <li>Start Date: {{ result.start_date }}</li>
+      <li>End Date: {{ result.end_date }}</li>
     </ul>
 
     <h2>Eligibility</h2>
     <ul>
-      <li>Min Age: {{ result.min_age }}</li>
-      <li>Max Age: {{ result.max_age }}</li>
+      <li>Age: {{ result.age }}</li>
       <li>Sex: {{ result.sex }}</li>
-      <li>Inclusion/Exclusion Criteria: {{ result.inclusion_exclusion_criteria }}</li>
     </ul>
 
     <h2>Condition/Intervention Information</h2>
     <ul>
       <li>Cancer Type: {{ result.cancer_type }}</li>
-      <li>Cancer Stage: {{ result.cancer_stage }}</li>
       <li>Treatment: {{ result.treatment }}</li>
       <li>Treatment Type: {{ result.treatment_type }}</li>
       <li>Primary Outcome Measurements: {{ result.primary_measurements }}</li>
@@ -61,26 +54,25 @@
     {% for location in locations %}
     Location Name: {{ location.location_name }}
     <ul>
-      <li>Address: {{ location.address_street }}</li>
-      <li>         {{ location.address_city }}</li>
-      <li>         {{ location.address_state }}</li>
-      <li>         {{ location.address_zipcode }}</li>
-      <li>         {{ location.address_country }}</li>
+      <li>Address: {{ location.address_city }},
+                   {{ location.address_state }},
+                   {{ location.address_zipcode }},
+                   {{ location.address_country }}
     </ul>
     {% endfor %}
 
-    <h2>Sponsor Information(s)</h2>
+    <h2>Sponsor(s) Information</h2>
     {% for sponsor in sponsors %}
     Institution Name(s): {{ sponsor.institution_name }}
     <ul>
       <li>Contact Person Name: {{ sponsor.contact_person_name }}</li>
       <li>Phone Number: {{ sponsor.phone_number }}</li>
       <li>Email: {{ sponsor.email }}</li>
-      <li>Address: {{ sponsor.address_street }}</li>
-      <li>         {{ sponsor.address_city }}</li>
-      <li>         {{ sponsor.address_state }}</li>
-      <li>         {{ sponsor.address_zipcode }}</li>
-      <li>         {{ sponsor.address_country }}</li>
+      <li>Address: {{ sponsor.address_street }},
+                   {{ sponsor.address_city }},
+                   {{ sponsor.address_state }},
+                   {{ sponsor.address_zipcode }},
+                   {{ sponsor.address_country }}
     </ul>
     {% endfor %}
 
