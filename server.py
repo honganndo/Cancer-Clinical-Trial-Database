@@ -238,7 +238,7 @@ def results():
                     "JOIN eligibility ON "
                      "(clinical_trials.age = eligibility.age "
                      "AND clinical_trials.sex = eligibility.sex)")
-                where_clause.append(f"eligibility.sex = '{sex}')")
+                where_clause.append(f"eligibility.sex = '{sex}'")
 
             if phase:
                 where_clause.append(f"'{phase}' = ANY(phase)")
