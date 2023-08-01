@@ -182,7 +182,7 @@ def homepage():
             "SELECT address_country FROM location"))
         locations = sorted(set([row[0] for row in results]))
 
-    return render_template("homepage.html", locations=locations)
+    return render_template("index.html", locations=locations)
 
 
 @app.route('/results', methods=['GET', 'POST'])

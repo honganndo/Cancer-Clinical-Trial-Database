@@ -20,21 +20,25 @@
 
       <label for="status">Status:</label>
         <select id="status" name="status">
-      <option value="all">All</option>
-      <option value="actively recruiting">Actively Recruiting</option>
-      <option value="not yet recruiting">Not Recruiting</option>
+      <option value="">Any Status</option>
+      <option value="active not recruiting">Active Not Recruiting</option>
+      <option value="enrolling by invitation">Enrolling by Invitation</option>
+      <option value="not yet recruiting">Not Yet Recruiting</option>
+      <option value="recruiting">Recruiting</option>
+      <option value="terminated">Terminated</option>
+      <option value="unknown">Unknown</option>
+      <option value="withdrawn">Withdrawn</option>
       <option value="completed">Completed</option>
         </select><br>
 
       <label for="phase">Phase:</label>
       <select id="phase" name="phase">
         <option value="">Any Phase</option>
-
-        <option value="Early Phase">Early Phase</option>
-        <option value="Phase 1">Phase 1</option>
-        <option value="Phase 2">Phase 2</option>
-        <option value="Phase 3">Phase 3</option>
-        <option value="Phase 4">Phase 4</option>
+        <option value="early phase 1">Early Phase 1</option>
+        <option value="phase 1">Phase 1</option>
+        <option value="phase 2">Phase 2</option>
+        <option value="phase 3">Phase 3</option>
+        <option value="phase 4">Phase 4</option>
 
       </select><br>
 
@@ -47,9 +51,10 @@
 
       <label for="sex">Sex:</label>
       <select id="sex" name="sex">
-        <option value="">Any</option>
-        <option value="male">male</option>
-        <option value="female">female</option>
+        <option value="">Any Sex</option>
+        <option value="all">All</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
       </select><br>
 
       <label for="location">Location:</label>
@@ -59,7 +64,6 @@
             <option value="{{ location }}">{{ location }}</option>
         {% endfor %}
         </select>
-      <input type="submit" value="Apply Filters">
   </div>
   </form>
 
