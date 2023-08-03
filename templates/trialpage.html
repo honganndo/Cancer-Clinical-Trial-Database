@@ -28,14 +28,14 @@
       <li>Status: {{ result.status }}</li>
       <li>Number of Patients: {{ result.number_of_patients }}</li>
       <li>Type: {{ result.type }}</li>
-      <li>Phase: {{ result.phase }}</li>
+      <li>Phase: {{ result.phase | join(', ') }}</li>
       <li>Start Date: {{ result.start_date }}</li>
       <li>End Date: {{ result.end_date }}</li>
     </ul>
 
     <h2>Eligibility</h2>
     <ul>
-      <li>Age: {{ result.age }}</li>
+      <li>Age: {{ result.age | join(', ') }}</li>
       <li>Sex: {{ result.sex }}</li>
     </ul>
 

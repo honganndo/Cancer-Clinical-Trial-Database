@@ -88,7 +88,7 @@
           <td>{{ result.status }}</td>
           <td>{{ result.number_of_patients }}</td>
           <td>{{ result.type }}</td>
-          <td>{{ result.phase }}</td>
+          <td> {{ result.phase | join(', ') }}</td>
         </tr>
       {% endfor %}
     </tbody>
