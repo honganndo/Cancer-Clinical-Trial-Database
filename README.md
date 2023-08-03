@@ -25,6 +25,17 @@ Project based on and sample data entries taken from [ClinicalTrials.gov](https:/
 **User accounts**
 - User accounts can be created to store clinical trials accross web sessions. The register/login page allows for creation of new users (ensuring the integrity constraint of no duplicate users) as well as validation of username and password of returning users.
 
+## Usage
+Import the cancer clinical trial PostgreSQL database stored in `CCTexport.pgsql`:
+```
+$ psql -U username dbname < CCTexport.pgsql
+```
+
+To run server:
+```
+$ python server.py
+```
+
 **Packages Required**
 - flask
 - psycopg2
