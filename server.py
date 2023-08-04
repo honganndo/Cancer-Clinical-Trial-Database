@@ -198,12 +198,14 @@ def results():
         locations = sorted(set([row[0] for row in results]))
 
     condition = request.form.get('condition')
+    nct = request.form.get('nct')
     location = request.form.get('location')
     status = request.form.get('status')
     phase = request.form.get('phase')
     type = request.form.get('type')
     sex = request.form.get('sex')
     age = request.form.get('age')
+    treatment_type = request.form.get('treatment_type')
     results = []
     
     if request.method == 'POST':
@@ -221,6 +223,18 @@ def results():
                     f"UPPER(description) LIKE UPPER('%{condition}%') OR "
                     f"UPPER(cancer_type) LIKE UPPER('%{condition}%') OR "
                     f"UPPER(treatment) LIKE UPPER('%{condition}%')")
+            if nct:
+                if nct[:3].upper() == "NCT":
+                    nct = nct[3:]
+                
+                # invalid NCT number
+                if nct.isdigit():
+                    where_clause.append(f"clinical_trials.nct = {nct}")
+                else:
+                    # invalid NCT number
+                    where_clause.append(f"clinical_trials.nct = -1")
+
+                
 
             if location:
                 results_query.append(
@@ -243,6 +257,9 @@ def results():
                 if age:
                     where_clause.append(f"'{age}' = ANY(eligibility.age)")
 
+            if treatment_type:
+                where_clause.append(f"treatment_type = UPPER('{treatment_type}')")
+
             if phase:
                 where_clause.append(f"'{phase}' = ANY(eligibility.phase)")
             
@@ -258,7 +275,8 @@ def results():
 
     return render_template("results.html", condition=condition, status=status, 
                            location=location, results=results, 
-                           locations=locations, phase=phase, type=type, sex=sex, age=age)
+                           locations=locations, phase=phase, type=type, sex=sex,
+                           age=age, treatment_type=treatment_type, nct=nct)
 
 
 @app.route('/trialpage/<int:trial_id>')

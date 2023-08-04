@@ -12,6 +12,9 @@
 
   <div>
     <h2>Refine Your Search</h2>
+    <label for="nct">Search by NCT#:</label>
+    <input type="search" id="nct" name="nct" placeholder="NCT#">
+
     <label for="location">Location:</label>
     <select id="location" name="location" >
       <option value="">Any Location</option>
@@ -66,11 +69,24 @@
       <option value="older adult">Older Adult</option>
     </select>
 
-
+    <label for="treatment_type">Treatment Type:</label>
+    <select id="treatment_type" name="treatment_type">
+      <option value="">Any Treatment Type</option>
+      <option value="drug">Drug</option>
+      <option value="diagnostic teset">Diagnostic Test</option>
+      <option value="procedure">Procedure</option>
+      <option value="biological">Biological</option>
+      <option value="genetic">Genetic</option>
+      <option value="radiation">Radiation</option>
+      <option value="device">Device</option>
+      <option value="misc">Miscellaneous</option>
+      <option value="other">Other</option>
+    </select>
 </div>
   </form>
 
   <h1>Search Results</h1>
+  <p>NCT#: {{ nct }}</p>
   <p>Keyword: {{ condition }}</p>
   <p>Location: {{ location }}</p>
   <p>Status: {{ status }}</p>
@@ -78,7 +94,7 @@
   <p>Type: {{ type }}</p>
   <p>Sex: {{ sex }}</p>
   <p>Age: {{ age }}</p>
-      
+  <p>Treatment Type: {{ treatment_type }}</p>   
 
   <table>
     <thead>
