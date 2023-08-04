@@ -203,6 +203,7 @@ def results():
     phase = request.form.get('phase')
     type = request.form.get('type')
     sex = request.form.get('sex')
+    age = request.form.get('age')
     results = []
     
     if request.method == 'POST':
@@ -232,15 +233,18 @@ def results():
             if status:
                 where_clause.append(f"status = '{status}'")
 
-            if sex:
+            if sex or age:
                 results_query.append(
                     "JOIN eligibility ON "
                      "(clinical_trials.age = eligibility.age "
                      "AND clinical_trials.sex = eligibility.sex)")
-                where_clause.append(f"eligibility.sex = '{sex}'")
+                if sex:
+                    where_clause.append(f"eligibility.sex = '{sex}'")
+                if age:
+                    where_clause.append(f"'{age}' = ANY(eligibility.age)")
 
             if phase:
-                where_clause.append(f"'{phase}' = ANY(phase)")
+                where_clause.append(f"'{phase}' = ANY(eligibility.phase)")
             
             if type:
                 where_clause.append(f"type = '{type}'")
@@ -254,7 +258,7 @@ def results():
 
     return render_template("results.html", condition=condition, status=status, 
                            location=location, results=results, 
-                           locations=locations, phase=phase, type=type, sex=sex)
+                           locations=locations, phase=phase, type=type, sex=sex, age=age)
 
 
 @app.route('/trialpage/<int:trial_id>')
