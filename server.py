@@ -261,7 +261,7 @@ def results():
                 where_clause.append(f"treatment_type = UPPER('{treatment_type}')")
 
             if phase:
-                where_clause.append(f"'{phase}' = ANY(eligibility.phase)")
+                where_clause.append(f"'{phase}' = ANY(phase)")
             
             if type:
                 where_clause.append(f"type = '{type}'")
