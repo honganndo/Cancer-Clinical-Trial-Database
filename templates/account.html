@@ -18,9 +18,9 @@
       <thead>
         <tr>
             <th> Trial Name </th>
-            <th> Description </th>
+            <th> Cancer Type </th>
+            <th> Treatment </th>
             <th> Status </th>
-            <th> Number of Patients </th>
             <th> Type </th>
             <th> Phase </th>
         </tr>
@@ -29,11 +29,11 @@
         {% for result in results %}
           <tr>
             <td><a href="{{ url_for('trialpage', trial_id=result.nct) }}">{{ result.trial_name }}</a></td>
-            <td>{{ result.description }}</td>
+            <td>{{ result.cancer_type }}</td>
+            <td>{{ result.treatment_type }}: {{ result.treatment }}</td>
             <td>{{ result.status }}</td>
-            <td>{{ result.number_of_patients }}</td>
             <td>{{ result.type }}</td>
-            <td>{{ result.phase }}</td>
+            <td> {{ result.phase | join(', ') }}</td>
           </tr>
         {% endfor %}
       </tbody>

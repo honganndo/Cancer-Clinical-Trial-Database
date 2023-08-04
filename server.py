@@ -208,19 +208,18 @@ def results():
     if request.method == 'POST':
         with engine.connect() as connection:
             results_query = ["SELECT * FROM clinical_trials"]
+            # Initial join to display cancer type and treatment on results page
+            results_query.append(
+                    "JOIN study ON clinical_trials.nct = study.nct")
             where_clause = []
 
             # Modify search query if additional selectors are applied.
             if condition:
-                results_query.append(
-                    "JOIN study ON clinical_trials.nct = study.nct")
-                results_query.append(
-                    "JOIN condition ON "
-                    "study.cancer_type = condition.cancer_type")
                 where_clause.append(
                     f"UPPER(trial_name) LIKE UPPER('%{condition}%') OR "
                     f"UPPER(description) LIKE UPPER('%{condition}%') OR "
-                    f"UPPER(condition.cancer_type) LIKE UPPER('%{condition}%')")
+                    f"UPPER(cancer_type) LIKE UPPER('%{condition}%') OR "
+                    f"UPPER(treatment) LIKE UPPER('%{condition}%')")
 
             if location:
                 results_query.append(
@@ -311,6 +310,7 @@ def account():
         user = connection.execute(text(user_query))
 
         results_query = ("SELECT * FROM clinical_trials clin "
+                        "JOIN study ON clin.nct = study.nct "
                         "JOIN saves sav ON sav.nct = clin.nct "
                         "JOIN user_account ua ON ua.user_name = sav.user_name "
                         f"WHERE ua.user_name = '{session['name']}'")
