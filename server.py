@@ -206,6 +206,8 @@ def results():
     sex = request.form.get('sex')
     age = request.form.get('age')
     treatment_type = request.form.get('treatment_type')
+    start_date = request.form.get('start_date')
+    end_date = request.form.get('end_date')
     results = []
     
     if request.method == 'POST':
@@ -233,8 +235,6 @@ def results():
                 else:
                     # invalid NCT number
                     where_clause.append(f"clinical_trials.nct = -1")
-
-                
 
             if location:
                 results_query.append(
@@ -266,6 +266,12 @@ def results():
             if type:
                 where_clause.append(f"type = '{type}'")
 
+            if start_date:
+                where_clause.append(f"start_date >= '{start_date}'")
+
+            if end_date:
+                where_clause.append(f"end_date <= '{end_date}'")
+
             if where_clause:
                 results_query.append("WHERE (" + 
                                      ") AND (".join(where_clause) + ")")
@@ -276,7 +282,8 @@ def results():
     return render_template("results.html", condition=condition, status=status, 
                            location=location, results=results, 
                            locations=locations, phase=phase, type=type, sex=sex,
-                           age=age, treatment_type=treatment_type, nct=nct)
+                           age=age, treatment_type=treatment_type, nct=nct,
+                           start_date=start_date, end_date=end_date)
 
 
 @app.route('/trialpage/<int:trial_id>')

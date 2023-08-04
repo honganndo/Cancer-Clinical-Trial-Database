@@ -82,6 +82,12 @@
       <option value="misc">Miscellaneous</option>
       <option value="other">Other</option>
     </select>
+
+    <label for="start_date">Start Date:</label>
+    <input type="date" id="start_date" name="start_date">
+
+    <label for="end_date">End Date:</label>
+    <input type="date" id="end_date" name="end_date">
 </div>
   </form>
 
@@ -94,7 +100,9 @@
   <p>Type: {{ type }}</p>
   <p>Sex: {{ sex }}</p>
   <p>Age: {{ age }}</p>
-  <p>Treatment Type: {{ treatment_type }}</p>   
+  <p>Treatment Type: {{ treatment_type }}</p>
+  <p>Start Date: {{ start_date }}</p>
+  <p>End Date: {{ end_date }}</p>
 
   <table>
     <thead>
