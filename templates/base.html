@@ -1,15 +1,11 @@
 <!doctype html>
-<title>{% block title %}{% endblock %} - Flaskr</title>
+<title>{% block title %}{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <nav>
-  <h1><u>Cancer Clinical Trial Database</u></h1>
+  <h1>Cancer Clinical Trial Database</h1>
   {% if g.user %}
     <span>User: {{ g.user['user_name'] }}</span>
-    <br>
-
     <a href="logout">Log Out</a>
-
-    <br><br>
-
     <form method="get" action="/">
       <input type="submit" value="Back to Home">
     </form>
@@ -18,7 +14,6 @@
     </form>
   {% else %}
     <a href="register">Register</a>
-    <br>
     <a href="login">Log In</a>
   {% endif %}
 </nav>

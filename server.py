@@ -1,77 +1,58 @@
 """
-Columbia's COMS W4111.001 Introduction to Databases
-Example Webserver
-To run locally:
-    python server.py
+Cancer Clinical Trials Database Web Server
+To run locally: python server.py
 Go to http://localhost:8111 in your browser.
-A debugger such as "pdb" may be helpful for debugging.
-Read about it online.
 """
 import os
-#import psycopg2
-# accessible as a variable in index.html:
 from sqlalchemy import *
-from sqlalchemy import exc
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response, flash, url_for
-from flask import session
+from flask import (Flask, request, render_template, g, redirect, Response, 
+                   flash, url_for, session)
 import functools
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 app.secret_key = b'8b13a355666c9c10f40a910ee860189d327837989500d00c9dbf2849f56af334'
 
-#
-# The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
-#
-# XXX: The URI should be in the format of:
-#
-#     postgresql://USER:PASSWORD@34.73.36.248/project1
-#
-# For example, if you had username zy2431 and password 123123, then the following line would be:
-#
-#     DATABASEURI = "postgresql://zy2431:123123@34.73.36.248/project1"
-#
-# Modify these with your own credentials you received from TA!
-DATABASE_USERNAME = "htd2109"
-DATABASE_PASSWRD = "2740"
-DATABASE_HOST = "34.148.107.47"  # change to 34.28.53.86 if you used database 2 for part 2
-DATABASEURI = f"postgresql://{DATABASE_USERNAME}:{DATABASE_PASSWRD}@{DATABASE_HOST}/project1"
 
-#
-# This line creates a database engine that knows how to connect to the URI above.
-#
+"""
+URI to connect to the database.
+Database run locally and password disabled for demonstration purposes.
+DATABASEURI = "postgresql://postgres:@localhost/cancer_clinical_trials"
+"""
+DATABASE_USERNAME = "postgres"
+DATABASE_PASSWRD = ""
+DATABASE_HOST = "localhost"
+DATABASEURI = (f"postgresql://{DATABASE_USERNAME}:{DATABASE_PASSWRD}"
+                              f"@{DATABASE_HOST}/cancer_clinical_trials")
+
+# Creates a database engine that knows how to connect to the URI above.
 engine = create_engine(DATABASEURI)
 
-#
-# Example of running queries in your database
-# Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
-#
-# with engine.connect() as conn:
-#     pass
 
 def login_required(view):
+    """
+    Define @login_required decorator to require that user be logged in 
+    """
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
             return redirect('/login')
 
         return view(**kwargs)
-
     return wrapped_view
+
 
 @app.before_request
 def before_request():
     """
-    This function is run at the beginning of every web request
-    (every time you enter an address in the web browser).
-    We use it to setup a database connection that can be used throughout the request.
-    The variable g is globally accessible.
+    This function is run at the beginning of every web request to setup a 
+    database connection that can be used throughout the request.
     """
     try:
         g.conn = engine.connect()
     except:
-        print("uh oh, problem connecting to database")
+        print("problem connecting to database")
         import traceback;
         traceback.print_exc()
         g.conn = None     
@@ -84,14 +65,16 @@ def before_request():
             params = {}
             params["param_name"] = session_name
             g.user = g.conn.execute(text(
-                'SELECT * FROM user_account WHERE user_name = (:param_name)'), params
+                'SELECT * FROM user_account WHERE user_name = (:param_name)'), 
+                params
             ).fetchone()
+
 
 @app.teardown_request
 def teardown_request(exception):
     """
-    At the end of the web request, this makes sure to close the database connection.
-    If you don't, the database could run out of memory!
+    At the end of the web request, this makes sure to close the database 
+    connection to prevent the database from running out of memory.
     """
     try:
         g.conn.close()
@@ -99,21 +82,19 @@ def teardown_request(exception):
         pass
 
 
+# @app.route is a decorator that means run the function whenever the user tries
+# to access the given path using a specified request
 #
-# @app.route is a decorator around index() that means:
-#   run index() whenever the user tries to access the "/" path using a GET request
+# For example, if you want the user to go to localhost:8111/foobar/ with POST or
+# GET then you could use:
 #
-# If you wanted the user to go to, for example, localhost:8111/foobar/ with POST or GET then you could use:
-#
-#       @app.route("/foobar/", methods=["POST", "GET"])
-#
-# PROTIP: (the trailing / in the path is important)
-#
-# see for routing: https://flask.palletsprojects.com/en/1.1.x/quickstart/#routing
-# see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
-
+#   @app.route("/foobar/", methods=["POST", "GET"])
 @app.route('/register', methods=('GET', 'POST'))
 def login_create():
+    """
+    Insert new user record into user_account table based on input form
+    information. Display error if username already exists.
+    """
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -128,15 +109,18 @@ def login_create():
     
         if error is None:
             try:
-                # insert_table_command = "INSERT INTO user_account(user_name, user_phone_number, user_email, user_password) VALUES ({u}, {p}, {e}, {pa})".format(u = username, p = phone, e = email, pa = password)
                 params = {}
                 params["new_name"] = username
                 params["new_password"] = password
                 params["new_phone"] = phone
                 params["new_email"] = email
                 
-                g.conn.execute(text('INSERT INTO user_account(user_name, user_phone_number, user_email, user_password) \
-                                    VALUES (:new_name, :new_phone, :new_email, :new_password)'), params)
+                g.conn.execute(text(
+                    "INSERT INTO user_account(user_name, user_phone_number, "
+                                             "user_email, user_password) "
+                     "VALUES (:new_name, :new_phone, :new_email, :new_password)"
+                     ), params)
+                
                 g.conn.commit()   
             except exc.IntegrityError:
                 error = f"User {username} is already registered."
@@ -147,17 +131,23 @@ def login_create():
 
     return render_template('register.html')
 
+
 @app.route('/login', methods=('GET', 'POST'))
 def login():
+    """
+    Retrieve user information from user_account table based on input username.
+    Verify that password is correct and logs the user in if so.
+    """
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         error = None
+
         params = {}
         params["param_name"] = username
         user = g.conn.execute(text(
-            'SELECT * FROM user_account WHERE user_name = (:param_name)'), params
-        ).fetchone()
+            'SELECT * FROM user_account WHERE user_name = (:param_name)'), 
+            params).fetchone()
 
         if user is None:
             error = 'Incorrect username.'
@@ -173,184 +163,234 @@ def login():
 
     return render_template('/login.html')
 
+
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect('/')
     
 
-#Homepage
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def homepage():
+    """
+    Display homepage for clinical trial website.
+    """
     with engine.connect() as connection:
-        location_query = "SELECT location_name FROM location"
-        result = connection.execute(text(location_query))
-        locations = [row[0] for row in result]
+        # Display available countries in location drop down
+        results = connection.execute(text(
+            "SELECT address_country FROM location"))
+        locations = sorted(set([row[0] for row in results]))
 
-    if request.method == 'POST':
-        location = request.form.get('location')
-        status = request.form.get('status')
-        condition = request.form.get('condition')
-        return redirect(url_for('results', location=location, status=status, condition=condition))
-
-
-    return render_template("homepage.html", locations=locations)
-
+    return render_template("index.html", locations=locations)
 
 
 @app.route('/results', methods=['GET', 'POST'])
 @login_required
 def results():
-
+    """
+    Construct results page according to search parameters.
+    """
     with engine.connect() as connection:
-        location_query = "SELECT location_name FROM location"
-        result = connection.execute(text(location_query))
-        locations = [row[0] for row in result]
+        # Display available countries in location drop down
+        results = connection.execute(text(
+            "SELECT address_country FROM location"))
+        locations = sorted(set([row[0] for row in results]))
 
+    condition = request.form.get('condition')
+    nct = request.form.get('nct')
     location = request.form.get('location')
     status = request.form.get('status')
-    condition = request.form.get('condition')
     phase = request.form.get('phase')
     type = request.form.get('type')
     sex = request.form.get('sex')
+    age = request.form.get('age')
+    treatment_type = request.form.get('treatment_type')
+    start_date = request.form.get('start_date')
+    end_date = request.form.get('end_date')
+    results = []
+    
+    if request.method == 'POST':
+        with engine.connect() as connection:
+            results_query = ["SELECT * FROM clinical_trials"]
+            # Initial join to display cancer type and treatment on results page
+            results_query.append(
+                    "JOIN study ON clinical_trials.nct = study.nct")
+            where_clause = []
 
+            # Modify search query if additional selectors are applied.
+            if condition:
+                where_clause.append(
+                    f"UPPER(trial_name) LIKE UPPER('%{condition}%') OR "
+                    f"UPPER(description) LIKE UPPER('%{condition}%') OR "
+                    f"UPPER(cancer_type) LIKE UPPER('%{condition}%') OR "
+                    f"UPPER(treatment) LIKE UPPER('%{condition}%')")
+            if nct:
+                if nct[:3].upper() == "NCT":
+                    nct = nct[3:]
+                
+                # invalid NCT number
+                if nct.isdigit():
+                    where_clause.append(f"clinical_trials.nct = {nct}")
+                else:
+                    # invalid NCT number
+                    where_clause.append(f"clinical_trials.nct = -1")
 
-    with engine.connect() as connection:
-        results_query = "SELECT * FROM clinical_trials"
-        input = []
+            if location:
+                results_query.append(
+                    "JOIN takes_place ON clinical_trials.nct = takes_place.nct")
+                results_query.append(
+                    "JOIN location ON "
+                     "takes_place.location_name = location.location_name")
+                where_clause.append(f"location.address_country = '{location}'")
 
-        if location:
-            input.append("UPPER(location.location_name) = UPPER('{}')".format(location))
-            results_query += " JOIN takes_place ON clinical_trials.nct = takes_place.nct"
-            results_query += " JOIN location ON takes_place.location_name = location.location_name"
-        if status != 'all':
-            input.append("UPPER(status) = UPPER('{}')".format(status))
-        if condition:
-            input.append(
-                "UPPER(trial_name) LIKE UPPER('%{}%') OR UPPER(description) LIKE UPPER('%{}%')".format(condition,
-                                                                                                       condition))
+            if status:
+                where_clause.append(f"status = '{status}'")
 
-        if sex:
-            input.append("UPPER(eligibility.sex) = UPPER('{}')".format(sex))
-            results_query += " JOIN eligibility ON clinical_trials.eligibility_id = eligibility.eligibility_id"
-        if phase:
-            input.append("UPPER(phase) = UPPER('{}')".format(phase))
-        if type:
-            input.append("UPPER(type) = UPPER('{}')".format(type))
+            if sex or age:
+                results_query.append(
+                    "JOIN eligibility ON "
+                     "(clinical_trials.age = eligibility.age "
+                     "AND clinical_trials.sex = eligibility.sex)")
+                if sex:
+                    where_clause.append(f"eligibility.sex = '{sex}'")
+                if age:
+                    where_clause.append(f"'{age}' = ANY(eligibility.age)")
 
+            if treatment_type:
+                where_clause.append(f"treatment_type = UPPER('{treatment_type}')")
 
-        if input:
-            results_query += " WHERE (" + ") AND (".join(input) + ")"
+            if phase:
+                where_clause.append(f"'{phase}' = ANY(phase)")
+            
+            if type:
+                where_clause.append(f"type = '{type}'")
 
-        results = connection.execute(text(results_query)).fetchall()
+            if start_date:
+                where_clause.append(f"start_date >= '{start_date}'")
 
+            if end_date:
+                where_clause.append(f"end_date <= '{end_date}'")
 
-    return render_template("results.html", condition=condition, status=status, location=location, results = results, locations = locations, phase = phase, type = type, sex = sex)
+            if where_clause:
+                results_query.append("WHERE (" + 
+                                     ") AND (".join(where_clause) + ")")
+            
+            results_query = " ".join(results_query)
+            results = connection.execute(text(results_query)).fetchall()
+
+    return render_template("results.html", condition=condition, status=status, 
+                           location=location, results=results, 
+                           locations=locations, phase=phase, type=type, sex=sex,
+                           age=age, treatment_type=treatment_type, nct=nct,
+                           start_date=start_date, end_date=end_date)
+
 
 @app.route('/trialpage/<int:trial_id>')
 @login_required
-def trialpage(trial_id, duplicatemessage = None, deletemessage = None):
-
+def trialpage(trial_id):
+    """
+    Construct trial page for a given trial id with all its details.
+    """
     with engine.connect() as connection:
-        results_query = "SELECT * FROM clinical_trials clin \
-                        JOIN eligibility elig ON clin.eligibility_id = elig.eligibility_id \
-                        JOIN study stud ON stud.nct = clin.nct \
-                        JOIN condition con ON con.cancer_type = stud.cancer_type \
-                        JOIN intervention int ON int.treatment = stud.treatment AND int.treatment_type = stud.treatment_type \
-                        WHERE clin.nct = '{}'".format(trial_id)
+        results_query = (
+            "SELECT * FROM clinical_trials clin "
+            "JOIN eligibility elig ON (clin.age = elig.age "
+                                 "AND clin.sex = elig.sex) "
+            "JOIN study stud ON stud.nct = clin.nct "
+            "JOIN condition con ON con.cancer_type = stud.cancer_type "
+            "JOIN intervention int ON (int.treatment = stud.treatment "
+                                "AND int.treatment_type = stud.treatment_type) "
+            f"WHERE clin.nct = '{trial_id}'")
 
         results = connection.execute(text(results_query))
 
-        locations_query = "SELECT * FROM clinical_trials clin \
-                        JOIN takes_place tp ON tp.nct = clin.nct \
-                        JOIN location loc ON loc.location_name = tp.location_name \
-                        WHERE clin.nct = '{}'".format(trial_id)
+        locations_query = (
+            "SELECT * FROM clinical_trials clin "
+            "JOIN takes_place tp ON tp.nct = clin.nct "
+            "JOIN location loc ON loc.location_name = tp.location_name "
+            f"WHERE clin.nct = '{trial_id}'")
 
         locations = connection.execute(text(locations_query))
 
-        sponsors_query = "SELECT * FROM clinical_trials clin \
-                        JOIN sponsors spon ON spon.nct = clin.nct \
-                        JOIN institution inst ON inst.institution_name = spon.institution_name \
-                        WHERE clin.nct = '{}'".format(trial_id)
+        sponsors_query = (
+            "SELECT * FROM clinical_trials clin "
+            "JOIN sponsors spon ON spon.nct = clin.nct "
+            "JOIN institution inst ON "
+                "inst.institution_name = spon.institution_name "
+            f"WHERE clin.nct = '{trial_id}'")
 
         sponsors = connection.execute(text(sponsors_query))
 
+    return render_template("trialpage.html", results = results, 
+                           sponsors = sponsors, locations = locations)
 
-    return render_template("trialpage.html", results = results, sponsors = sponsors, locations = locations, duplicatemessage = duplicatemessage, deletemessage = deletemessage)
-
-
-@app.route('/invalidsearch')
-@login_required
-def invalidsearch():
-    return render_template("invalidsearch.html")
 
 @app.route('/account')
 @login_required
 def account():
+    """
+    Construct account page with saved clinical trials for current user.
+    """
     with engine.connect() as connection:
-        user_query = "SELECT * \
-                        FROM user_account \
-                        WHERE user_name = '{}'".format(session['name'])
-
+        user_query = ("SELECT * FROM user_account "
+                    f"WHERE user_name = '{session['name']}'")
 
         user = connection.execute(text(user_query))
 
-        results_query = "SELECT * \
-                        FROM clinical_trials clin \
-                        JOIN saves sav ON sav.nct = clin.nct\
-                        JOIN user_account ua ON ua.user_name = sav.user_name\
-                        WHERE ua.user_name = '{}'".format(session['name'])
+        results_query = ("SELECT * FROM clinical_trials clin "
+                        "JOIN study ON clin.nct = study.nct "
+                        "JOIN saves sav ON sav.nct = clin.nct "
+                        "JOIN user_account ua ON ua.user_name = sav.user_name "
+                        f"WHERE ua.user_name = '{session['name']}'")
 
         results = connection.execute(text(results_query))
 
     return render_template("account.html", results = results, user = user)
 
+
 @app.route('/saves/add', methods=['POST'])
 @login_required
 def add_save():
+    """
+    Save clinical trial to user account.
+    """
     trial_id = request.form['trial_id']
-    institution_query = "SELECT institution_name FROM sponsors WHERE nct = {}".format(trial_id)
-    institution_row = g.conn.execute(text(institution_query)).fetchone()
-    institution = institution_row[0]
 
-
-    save_query = "SELECT * FROM saves WHERE user_name = '{}' AND nct = '{}'".format(session['name'], trial_id)
+    # Check if trial already saved
+    save_query = (f"SELECT * FROM saves WHERE user_name = '{session['name']}' "
+                  f"AND nct = '{trial_id}'")
     save_row = g.conn.execute(text(save_query)).fetchone()
 
-    duplicatemessage = "Trial saved"
-    if save_row:
-        duplicatemessage = "Trial already saved"
-        return redirect(url_for('trialpage', trial_id=trial_id, duplicatemessage = duplicatemessage))
+    if not save_row:
+        params = {"user_name": session['name'], "nct": trial_id}
+        g.conn.execute(text("INSERT INTO saves(user_name, nct) "
+                            "VALUES (:user_name, :nct)"), params)
+        g.conn.commit()
 
-    params = {"user_name": session['name'], "nct": trial_id, "institution_name": institution}
-    g.conn.execute(text("INSERT INTO saves (user_name,nct, institution_name) VALUES (:user_name, :nct, :institution_name)"), params)
-    g.conn.commit()
+    return redirect(url_for('trialpage', trial_id = trial_id))
 
-    return redirect(url_for('trialpage', trial_id = trial_id, duplicatemessage = duplicatemessage))
 
 @app.route('/saves/remove', methods=['POST'])
 @login_required
 def remove_save():
+    """
+    Remove clinical trial to user account.
+    """
     trial_id = request.form['trial_id']
-    institution_query = "SELECT institution_name FROM sponsors WHERE nct = {}".format(trial_id)
-    institution_row = g.conn.execute(text(institution_query)).fetchone()
-    institution = institution_row[0]
 
-    save_query = "SELECT * FROM saves WHERE user_name = '{}' AND nct = '{}'".format(session['name'], trial_id)
+    # Check if trial is actually saved
+    save_query = (f"SELECT * FROM saves WHERE user_name = '{session['name']}' "
+                  f"AND nct = '{trial_id}'")
     save_row = g.conn.execute(text(save_query)).fetchone()
 
-    deletemessage = "Trial removed from saved trials"
-    if not save_row:
-        deletemessage = "Trial already unfavorited"
-        return redirect(url_for('trialpage', trial_id=trial_id, deletemessage = deletemessage))
+    if save_row:
+        params = {"user_name": session['name'], "nct": trial_id}
+        g.conn.execute(text("DELETE FROM saves WHERE user_name = :user_name "
+                            "AND nct = :nct"), params)
+        g.conn.commit()
 
-    params = {"user_name": session['name'], "nct": trial_id, "institution_name": institution}
-    g.conn.execute(text("DELETE FROM saves WHERE user_name = :user_name AND nct = :nct AND institution_name = :institution_name"), params)
-    g.conn.commit()
-
-    return redirect(url_for('trialpage', trial_id = trial_id, deletemessage = deletemessage))
-
+    return redirect(url_for('trialpage', trial_id = trial_id))
 
 
 if __name__ == "__main__":
