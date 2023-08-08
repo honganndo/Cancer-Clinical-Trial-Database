@@ -1,138 +1,185 @@
-html {
-    font-family: sans-serif;
-    background: #eee;
-    padding: 1rem;
-  }
-  
-  body {
-    max-width: 960px;
-    margin: 0 auto;
-    background: white;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: serif;
-    color: #377ba8;
-    margin: 1rem 0;
-  }
-  
-  a {
-    color: #377ba8;
-  }
-  
-  hr {
-    border: none;
-    border-top: 1px solid lightgray;
-  }
-  
-  nav {
-    background: lightgray;
-    display: flex;
-    align-items: center;
-    padding: 0 0.5rem;
-  }
-  
-  nav h1 {
-    flex: auto;
-    margin: 0;
-  }
-  
-  nav h1 a {
-    text-decoration: none;
-    padding: 0.25rem 0.5rem;
-  }
-  
-  nav ul  {
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  
-  nav ul li a, nav ul li span, header .action {
-    display: block;
-    padding: 0.5rem;
-  }
-  
-  .content {
-    padding: 0 1rem 1rem;
-  }
-  
-  .content > header {
-    border-bottom: 1px solid lightgray;
-    display: flex;
-    align-items: flex-end;
-  }
-  
-  .content > header h1 {
-    flex: auto;
-    margin: 1rem 0 0.25rem 0;
-  }
-  
-  .flash {
-    margin: 1em 0;
-    padding: 1em;
-    background: #cae6f6;
-    border: 1px solid #377ba8;
-  }
-  
-  .post > header {
-    display: flex;
-    align-items: flex-end;
-    font-size: 0.85em;
-  }
-  
-  .post > header > div:first-of-type {
-    flex: auto;
-  }
-  
-  .post > header h1 {
-    font-size: 1.5em;
-    margin-bottom: 0;
-  }
-  
-  .post .about {
-    color: slategray;
-    font-style: italic;
-  }
-  
-  .post .body {
-    white-space: pre-line;
-  }
-  
-  .content:last-child {
-    margin-bottom: 0;
-  }
-  
-  .content form {
-    margin: 1em 0;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .content label {
-    font-weight: bold;
-    margin-bottom: 0.5em;
-  }
-  
-  .content input, .content textarea {
-    margin-bottom: 1em;
-  }
-  
-  .content textarea {
-    min-height: 12em;
-    resize: vertical;
-  }
-  
-  input.danger {
-    color: #cc2f2e;
-  }
-  
-  input[type=submit] {
-    align-self: start;
-    min-width: 10em;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap');
 
-  table, td, th {
-    border: 1px solid black;
-  }
+:root {
+  --dark-text:rgb(65, 70, 80);
+  --light-text:rgb(130, 130, 145);
+  --light-background: rgb(245, 245, 250);
+  --dark-background: rgb(30, 45, 60);
+  --white: rgb(255, 255, 255);
+  --blue: rgb(5, 165, 220);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background: var(--light-background);
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+  font-size: 100%;
+}
+
+h1, h2, h3 {
+  color: var(--blue);
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 48px;
+}
+
+h2 {
+  font-size: 30px;
+}
+
+a {
+  color: var(--dark-background);
+  background-color: transparent;
+  text-decoration: none;
+  transition: .3s ease-out;
+}
+
+a:hover {
+  color: var(--blue);
+}
+
+p {
+  line-height: 2;
+}
+
+::placeholder {
+  color: var(--light-text);
+}
+
+input {
+  background-color: rgb(233, 235, 243);
+  border-radius: 30px;
+  border: none;
+  outline: none;
+  padding: 10px 20px;
+  transition: width 0.3s;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--dark-background);
+}
+
+nav * {
+  background-color: transparent;
+}
+
+nav h1 {
+  flex: auto;
+  margin: 0;
+}
+
+nav h1 a {
+  text-decoration: none;
+  padding: 0.25rem 0.5rem;
+}
+
+nav ul  {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li a, nav ul li span, header .action {
+  display: block;
+  padding: 0.5rem;
+}
+
+.content {
+  color: var(--dark-text);
+  padding: 1rem;
+}
+
+.content > header {
+  border-bottom: 1px solid lightgray;
+  display: flex;
+  align-items: flex-end;
+}
+
+.content > header h1 {
+  flex: auto;
+  margin: 1rem 0 0.25rem 0;
+}
+
+.flash {
+  margin: 1em 0;
+  padding: 1em;
+  background: #cae6f6;
+  border: 1px solid #377ba8;
+}
+
+.post > header {
+  display: flex;
+  align-items: flex-end;
+  font-size: 0.85em;
+}
+
+.post > header > div:first-of-type {
+  flex: auto;
+}
+
+.post > header h1 {
+  font-size: 1.5em;
+  margin-bottom: 0;
+}
+
+.post .about {
+  color: slategray;
+  font-style: italic;
+}
+
+.post .body {
+  white-space: pre-line;
+}
+
+.content:last-child {
+  margin-bottom: 0;
+}
+
+.content form {
+  margin: 1em 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.content label {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.content input, .content textarea {
+  margin-bottom: 1em;
+}
+
+.content textarea {
+  min-height: 12em;
+  resize: vertical;
+}
+
+input.danger {
+  color: #cc2f2e;
+}
+
+input[type=submit] {
+  align-self: start;
+  min-width: 10em;
+}
+
+table, td, th {
+  color: black;
+  border: 1px solid black;
+  background-color: var(--white);
+}
