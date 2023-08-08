@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Search{% endblock %}</h1>
+  <h2>{% block title %}Search{% endblock %}</h2>
 {% endblock %}
 
 {% block content %}
@@ -11,7 +11,7 @@
   <button type="submit">Search</button>
 
   <div>
-    <h2>Refine Your Search</h2>
+    <h3>Refine Your Search</h3>
     <label for="nct">Search by NCT#:</label>
     <input type="search" id="nct" name="nct" placeholder="NCT#">
 
@@ -91,7 +91,7 @@
 </div>
   </form>
 
-  <h1>Search Results</h1>
+  <h2>Search Results</h2>
   <p>NCT#: {{ nct }}</p>
   <p>Keyword: {{ condition }}</p>
   <p>Location: {{ location }}</p>

@@ -3,19 +3,21 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <nav>
   <h1>Cancer Clinical Trial Database</h1>
-  {% if g.user %}
-    <span>User: {{ g.user['user_name'] }}</span>
-    <a href="logout">Log Out</a>
-    <form method="get" action="/">
-      <input type="submit" value="Back to Home">
-    </form>
-    <form method="get" action="/account">
-      <input type="submit" value="My Account">
-    </form>
-  {% else %}
-    <a href="register">Register</a>
-    <a href="login">Log In</a>
-  {% endif %}
+  <div class="menu">
+    {% if g.user %}
+      <span>User: {{ g.user['user_name'] }}</span>
+      <a href="logout">Log Out</a>
+      <form method="get" action="/">
+        <input type="submit" value="Back to Home">
+      </form>
+      <form method="get" action="/account">
+        <input type="submit" value="My Account">
+      </form>
+    {% else %}
+      <a href="register">Register</a>
+      <a href="login">Log In</a>
+    {% endif %}
+  </div>
 </nav>
 <section class="content">
   <header>

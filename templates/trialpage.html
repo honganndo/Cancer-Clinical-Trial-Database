@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}{% endblock %}</h1>
+  <h2>{% block title %}{% endblock %}</h2>
 {% endblock %}
 
 {% block content %}
   <body>
     {% for result in results %}
-    <h1>{{ result.trial_name }}</h1>
+    <h2>{{ result.trial_name }}</h2>
 
     <form action="{{ url_for('add_save') }}" method="POST">
       <input type="hidden" name="trial_id" value="{{ result.nct }}">
@@ -19,10 +19,10 @@
       <button type="submit">Remove from Favorites</button>
     </form>
 
-    <h2>Description</h2>
+    <h3>Description</h3>
     <p>{{ result.description }}</p>
 
-    <h2>Basic Information</h2>
+    <h3>Basic Information</h3>
     <ul>
       <li>NCT Number: {{ result.nct }}</li>
       <li>Status: {{ result.status }}</li>
@@ -33,13 +33,13 @@
       <li>End Date: {{ result.end_date }}</li>
     </ul>
 
-    <h2>Eligibility</h2>
+    <h3>Eligibility</h3>
     <ul>
       <li>Age: {{ result.age | join(', ') }}</li>
       <li>Sex: {{ result.sex }}</li>
     </ul>
 
-    <h2>Condition/Intervention Information</h2>
+    <h3>Condition/Intervention Information</h3>
     <ul>
       <li>Cancer Type: {{ result.cancer_type }}</li>
       <li>Treatment: {{ result.treatment }}</li>
@@ -50,7 +50,7 @@
     </ul>
     {% endfor %}
 
-    <h2>Location(s)</h2>
+    <h3>Location(s)</h3>
     {% for location in locations %}
     Location Name: {{ location.location_name }}
     <ul>
@@ -61,7 +61,7 @@
     </ul>
     {% endfor %}
 
-    <h2>Sponsor(s) Information</h2>
+    <h3>Sponsor(s) Information</h3>
     {% for sponsor in sponsors %}
     Institution Name(s): {{ sponsor.institution_name }}
     <ul>
