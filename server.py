@@ -198,7 +198,6 @@ def results():
         locations = sorted(set([row[0] for row in results]))
 
     condition = request.form.get('condition')
-    nct = request.form.get('nct')
     location = request.form.get('location')
     status = request.form.get('status')
     phase = request.form.get('phase')
@@ -220,21 +219,20 @@ def results():
 
             # Modify search query if additional selectors are applied.
             if condition:
-                where_clause.append(
+                where_str = (
                     f"UPPER(trial_name) LIKE UPPER('%{condition}%') OR "
                     f"UPPER(description) LIKE UPPER('%{condition}%') OR "
                     f"UPPER(cancer_type) LIKE UPPER('%{condition}%') OR "
                     f"UPPER(treatment) LIKE UPPER('%{condition}%')")
-            if nct:
-                if nct[:3].upper() == "NCT":
-                    nct = nct[3:]
+                
+                if condition[:3].upper() == "NCT":
+                    condition = condition[3:]
                 
                 # invalid NCT number
-                if nct.isdigit():
-                    where_clause.append(f"clinical_trials.nct = {nct}")
-                else:
-                    # invalid NCT number
-                    where_clause.append(f"clinical_trials.nct = -1")
+                if condition.isdigit():
+                    where_str += (f" OR clinical_trials.nct = {condition}")
+
+                where_clause.append(where_str)
 
             if location:
                 results_query.append(
@@ -282,7 +280,7 @@ def results():
     return render_template("results.html", condition=condition, status=status, 
                            location=location, results=results, 
                            locations=locations, phase=phase, type=type, sex=sex,
-                           age=age, treatment_type=treatment_type, nct=nct,
+                           age=age, treatment_type=treatment_type,
                            start_date=start_date, end_date=end_date)
 
 

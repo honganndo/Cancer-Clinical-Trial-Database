@@ -7,24 +7,18 @@
 {% block content %}
 <form method="POST" action="{{ url_for('results') }}">
   <div class="main-search">
-    <input type="search" id="condition" name="condition" placeholder="Keyword" autofocus>
-    <button type="submit">Search</button>
+    <input type="search" id="condition" name="condition" placeholder="Keyword/NCT#" autofocus>
+    <button type="submit" class="search-btn">Search</button>
   </div>
 
   <div class="adv-search">
     <h3>Advanced Search</h3>
-
-    <div class="filter">
-      <label for="nct">Search by NCT#:</label>
-      <input type="search" id="nct" name="nct" placeholder="NCT#">
-    </div>
-
     <div class="filter">
       <label for="location">Location:</label>
       <select id="location" name="location" >
         <option value="">Any Location</option>
-        {% for location in locations %}
-            <option value="{{ location }}">{{ location }}</option>
+        {% for l in locations %}
+            <option value="{{ l }}" {% if location == l %}selected{% endif %}>{{ l }}</option>
         {% endfor %}
       </select>
     </div>
@@ -33,14 +27,14 @@
       <label for="status">Status:</label>
       <select id="status" name="status">
         <option value="">Any Status</option>
-        <option value="active not recruiting">Active Not Recruiting</option>
-        <option value="enrolling by invitation">Enrolling by Invitation</option>
-        <option value="not yet recruiting">Not Yet Recruiting</option>
-        <option value="recruiting">Recruiting</option>
-        <option value="terminated">Terminated</option>
-        <option value="unknown">Unknown</option>
-        <option value="withdrawn">Withdrawn</option>
-        <option value="completed">Completed</option>
+        <option value="active not recruiting" {% if status == "active not recruiting" %}selected{% endif %}>Active Not Recruiting</option>
+        <option value="enrolling by invitation" {% if status == "enrolling by invitation" %}selected{% endif %}>Enrolling by Invitation</option>
+        <option value="not yet recruiting" {% if status == "not yet recruiting" %}selected{% endif %}>Not Yet Recruiting</option>
+        <option value="recruiting" {% if status == "recruiting" %}selected{% endif %}>Recruiting</option>
+        <option value="terminated" {% if status == "terminated" %}selected{% endif %}>Terminated</option>
+        <option value="unknown" {% if status == "unknown" %}selected{% endif %}>Unknown</option>
+        <option value="withdrawn" {% if status == "withdrawn" %}selected{% endif %}>Withdrawn</option>
+        <option value="completed" {% if status == "completed" %}selected{% endif %}>Completed</option>
       </select>
     </div>
 
@@ -48,11 +42,11 @@
       <label for="phase">Phase:</label>
       <select id="phase" name="phase">
         <option value="">Any Phase</option>
-        <option value="early phase 1">Early Phase 1</option>
-        <option value="phase 1">Phase 1</option>
-        <option value="phase 2">Phase 2</option>
-        <option value="phase 3">Phase 3</option>
-        <option value="phase 4">Phase 4</option>
+        <option value="early phase 1" {% if phase == "early phase 1" %}selected{% endif %}>Early Phase 1</option>
+        <option value="phase 1" {% if phase == "phase 1" %}selected{% endif %}>Phase 1</option>
+        <option value="phase 2" {% if phase == "phase 2" %}selected{% endif %}>Phase 2</option>
+        <option value="phase 3" {% if phase == "phase 3" %}selected{% endif %}>Phase 3</option>
+        <option value="phase 4" {% if phase == "phase 4" %}selected{% endif %}>Phase 4</option>
       </select>
     </div>
 
@@ -60,8 +54,8 @@
       <label for="type">Type:</label>
       <select id="type" name="type">
         <option value="">Any Type</option>
-        <option value="interventional">Interventional</option>
-        <option value="observational">Observational</option>
+        <option value="interventional" {% if type == "interventional" %}selected{% endif %}>Interventional</option>
+        <option value="observational" {% if type == "observational" %}selected{% endif %}>Observational</option>
       </select>
     </div>
 
@@ -69,9 +63,9 @@
       <label for="sex">Sex:</label>
       <select id="sex" name="sex">
         <option value="">Any Sex</option>
-        <option value="all">All</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
+        <option value="all" {% if sex == "all" %}selected{% endif %}>All</option>
+        <option value="male" {% if sex == "male" %}selected{% endif %}>Male</option>
+        <option value="female" {% if sex == "female" %}selected{% endif %}>Female</option>
       </select>
     </div>
 
@@ -79,9 +73,9 @@
       <label for="age">Age:</label>
       <select id="age" name="age">
         <option value="">Any Age</option>
-        <option value="child">Child</option>
-        <option value="adult">Adult</option>
-        <option value="older adult">Older Adult</option>
+        <option value="child" {% if age == "child" %}selected{% endif %}>Child</option>
+        <option value="adult" {% if age == "adult" %}selected{% endif %}>Adult</option>
+        <option value="older adult" {% if age == "older adult" %}selected{% endif %}>Older Adult</option>
       </select>
     </div>
 
@@ -89,45 +83,33 @@
       <label for="treatment_type">Treatment Type:</label>
       <select id="treatment_type" name="treatment_type">
         <option value="">Any Treatment Type</option>
-        <option value="drug">Drug</option>
-        <option value="diagnostic teset">Diagnostic Test</option>
-        <option value="procedure">Procedure</option>
-        <option value="biological">Biological</option>
-        <option value="genetic">Genetic</option>
-        <option value="radiation">Radiation</option>
-        <option value="device">Device</option>
-        <option value="misc">Miscellaneous</option>
-        <option value="other">Other</option>
+        <option value="drug" {% if treatment_type == "drug" %}selected{% endif %}>Drug</option>
+        <option value="diagnostic test" {% if treatment_type == "diagnostic test" %}selected{% endif %}>Diagnostic Test</option>
+        <option value="procedure" {% if treatment_type == "procedure" %}selected{% endif %}>Procedure</option>
+        <option value="biological" {% if treatment_type == "biological" %}selected{% endif %}>Biological</option>
+        <option value="genetic" {% if treatment_type == "genetic" %}selected{% endif %}>Genetic</option>
+        <option value="radiation" {% if treatment_type == "radiation" %}selected{% endif %}>Radiation</option>
+        <option value="device" {% if treatment_type == "device" %}selected{% endif %}>Device</option>
+        <option value="misc" {% if treatment_type == "misc" %}selected{% endif %}>Miscellaneous</option>
+        <option value="other" {% if treatment_type == "other" %}selected{% endif %}>Other</option>
       </select>
     </div>
 
     <div class="filter">
       <label for="start_date">Start Date:</label>
-      <input type="date" id="start_date" name="start_date">
+      <input type="date" id="start_date" name="start_date" {% if start_date is not none %}value="{{start_date}}"{% endif %}>
     </div>
 
     <div class="filter">
       <label for="end_date">End Date:</label>
-      <input type="date" id="end_date" name="end_date">
+      <input type="date" id="end_date" name="end_date" {% if end_date is not none %}value="{{end_date}}"{% endif %}>
     </div>
-  </div>
 
-  <div class="parameters">
-    <h2>Search Results</h2>
-    <p>NCT#: {{ nct }}</p>
-    <p>Keyword: {{ condition }}</p>
-    <p>Location: {{ location }}</p>
-    <p>Status: {{ status }}</p>
-    <p>Phase: {{ phase }}</p>
-    <p>Type: {{ type }}</p>
-    <p>Sex: {{ sex }}</p>
-    <p>Age: {{ age }}</p>
-    <p>Treatment Type: {{ treatment_type }}</p>
-    <p>Start Date: {{ start_date }}</p>
-    <p>End Date: {{ end_date }}</p>
+    <button type="button" id=clear-btn class="search-btn">Clear</button>
   </div>
 </form>
 
+<h2>Search Results: {{condition}}</h2>
 <table>
   <thead>
     <tr>
