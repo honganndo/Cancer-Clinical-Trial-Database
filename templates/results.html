@@ -6,127 +6,151 @@
 
 {% block content %}
 <form method="POST" action="{{ url_for('results') }}">
-  <label for="condition">Search for Another Condition/Keyword:</label>
-  <input type="search" id="condition" name="condition" placeholder="Search by Keyword" autofocus>
-  <button type="submit">Search</button>
+  <div class="main-search">
+    <input type="search" id="condition" name="condition" placeholder="Keyword" autofocus>
+    <button type="submit">Search</button>
+  </div>
 
-  <div>
-    <h3>Refine Your Search</h3>
-    <label for="nct">Search by NCT#:</label>
-    <input type="search" id="nct" name="nct" placeholder="NCT#">
+  <div class="adv-search">
+    <h3>Advanced Search</h3>
 
-    <label for="location">Location:</label>
-    <select id="location" name="location" >
-      <option value="">Any Location</option>
-      {% for location in locations %}
-          <option value="{{ location }}">{{ location }}</option>
-      {% endfor %}
-    </select>
+    <div class="filter">
+      <label for="nct">Search by NCT#:</label>
+      <input type="search" id="nct" name="nct" placeholder="NCT#">
+    </div>
 
-    <label for="status">Status:</label>
-    <select id="status" name="status">
-      <option value="">Any Status</option>
-      <option value="active not recruiting">Active Not Recruiting</option>
-      <option value="enrolling by invitation">Enrolling by Invitation</option>
-      <option value="not yet recruiting">Not Yet Recruiting</option>
-      <option value="recruiting">Recruiting</option>
-      <option value="terminated">Terminated</option>
-      <option value="unknown">Unknown</option>
-      <option value="withdrawn">Withdrawn</option>
-      <option value="completed">Completed</option>
-    </select>
+    <div class="filter">
+      <label for="location">Location:</label>
+      <select id="location" name="location" >
+        <option value="">Any Location</option>
+        {% for location in locations %}
+            <option value="{{ location }}">{{ location }}</option>
+        {% endfor %}
+      </select>
+    </div>
 
-    <label for="phase">Phase:</label>
-    <select id="phase" name="phase">
-      <option value="">Any Phase</option>
-      <option value="early phase 1">Early Phase 1</option>
-      <option value="phase 1">Phase 1</option>
-      <option value="phase 2">Phase 2</option>
-      <option value="phase 3">Phase 3</option>
-      <option value="phase 4">Phase 4</option>
-    </select>
+    <div class="filter">
+      <label for="status">Status:</label>
+      <select id="status" name="status">
+        <option value="">Any Status</option>
+        <option value="active not recruiting">Active Not Recruiting</option>
+        <option value="enrolling by invitation">Enrolling by Invitation</option>
+        <option value="not yet recruiting">Not Yet Recruiting</option>
+        <option value="recruiting">Recruiting</option>
+        <option value="terminated">Terminated</option>
+        <option value="unknown">Unknown</option>
+        <option value="withdrawn">Withdrawn</option>
+        <option value="completed">Completed</option>
+      </select>
+    </div>
 
-    <label for="type">Type:</label>
-    <select id="type" name="type">
-      <option value="">Any Type</option>
-      <option value="interventional">Interventional</option>
-      <option value="observational">Observational</option>
-    </select>
+    <div class="filter">
+      <label for="phase">Phase:</label>
+      <select id="phase" name="phase">
+        <option value="">Any Phase</option>
+        <option value="early phase 1">Early Phase 1</option>
+        <option value="phase 1">Phase 1</option>
+        <option value="phase 2">Phase 2</option>
+        <option value="phase 3">Phase 3</option>
+        <option value="phase 4">Phase 4</option>
+      </select>
+    </div>
 
-    <label for="sex">Sex:</label>
-    <select id="sex" name="sex">
-      <option value="">Any Sex</option>
-      <option value="all">All</option>
-      <option value="male">Male</option>
-      <option value="female">Female</option>
-    </select>
+    <div class="filter">
+      <label for="type">Type:</label>
+      <select id="type" name="type">
+        <option value="">Any Type</option>
+        <option value="interventional">Interventional</option>
+        <option value="observational">Observational</option>
+      </select>
+    </div>
 
-    <label for="age">Age:</label>
-    <select id="age" name="age">
-      <option value="">Any Age</option>
-      <option value="child">Child</option>
-      <option value="adult">Adult</option>
-      <option value="older adult">Older Adult</option>
-    </select>
+    <div class="filter">
+      <label for="sex">Sex:</label>
+      <select id="sex" name="sex">
+        <option value="">Any Sex</option>
+        <option value="all">All</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+    </div>
 
-    <label for="treatment_type">Treatment Type:</label>
-    <select id="treatment_type" name="treatment_type">
-      <option value="">Any Treatment Type</option>
-      <option value="drug">Drug</option>
-      <option value="diagnostic teset">Diagnostic Test</option>
-      <option value="procedure">Procedure</option>
-      <option value="biological">Biological</option>
-      <option value="genetic">Genetic</option>
-      <option value="radiation">Radiation</option>
-      <option value="device">Device</option>
-      <option value="misc">Miscellaneous</option>
-      <option value="other">Other</option>
-    </select>
+    <div class="filter">
+      <label for="age">Age:</label>
+      <select id="age" name="age">
+        <option value="">Any Age</option>
+        <option value="child">Child</option>
+        <option value="adult">Adult</option>
+        <option value="older adult">Older Adult</option>
+      </select>
+    </div>
 
-    <label for="start_date">Start Date:</label>
-    <input type="date" id="start_date" name="start_date">
+    <div class="filter">
+      <label for="treatment_type">Treatment Type:</label>
+      <select id="treatment_type" name="treatment_type">
+        <option value="">Any Treatment Type</option>
+        <option value="drug">Drug</option>
+        <option value="diagnostic teset">Diagnostic Test</option>
+        <option value="procedure">Procedure</option>
+        <option value="biological">Biological</option>
+        <option value="genetic">Genetic</option>
+        <option value="radiation">Radiation</option>
+        <option value="device">Device</option>
+        <option value="misc">Miscellaneous</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
 
-    <label for="end_date">End Date:</label>
-    <input type="date" id="end_date" name="end_date">
-</div>
-  </form>
+    <div class="filter">
+      <label for="start_date">Start Date:</label>
+      <input type="date" id="start_date" name="start_date">
+    </div>
 
-  <h2>Search Results</h2>
-  <p>NCT#: {{ nct }}</p>
-  <p>Keyword: {{ condition }}</p>
-  <p>Location: {{ location }}</p>
-  <p>Status: {{ status }}</p>
-  <p>Phase: {{ phase }}</p>
-  <p>Type: {{ type }}</p>
-  <p>Sex: {{ sex }}</p>
-  <p>Age: {{ age }}</p>
-  <p>Treatment Type: {{ treatment_type }}</p>
-  <p>Start Date: {{ start_date }}</p>
-  <p>End Date: {{ end_date }}</p>
+    <div class="filter">
+      <label for="end_date">End Date:</label>
+      <input type="date" id="end_date" name="end_date">
+    </div>
+  </div>
 
-  <table>
-    <thead>
+  <div class="parameters">
+    <h2>Search Results</h2>
+    <p>NCT#: {{ nct }}</p>
+    <p>Keyword: {{ condition }}</p>
+    <p>Location: {{ location }}</p>
+    <p>Status: {{ status }}</p>
+    <p>Phase: {{ phase }}</p>
+    <p>Type: {{ type }}</p>
+    <p>Sex: {{ sex }}</p>
+    <p>Age: {{ age }}</p>
+    <p>Treatment Type: {{ treatment_type }}</p>
+    <p>Start Date: {{ start_date }}</p>
+    <p>End Date: {{ end_date }}</p>
+  </div>
+</form>
+
+<table>
+  <thead>
+    <tr>
+        <th> Trial Name </th>
+        <th> Cancer Type </th>
+        <th> Treatment </th>
+        <th> Status </th>
+        <th> Phase </th>
+        <th> Type </th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for result in results %}
       <tr>
-          <th> Trial Name </th>
-          <th> Cancer Type </th>
-          <th> Treatment </th>
-          <th> Status </th>
-          <th> Phase </th>
-          <th> Type </th>
+        <td><a href="{{ url_for('trialpage', trial_id=result.nct) }}">{{ result.trial_name }}</a></td>
+        <td>{{ result.cancer_type }}</td>
+        <td>{{ result.treatment_type }}: {{ result.treatment }}</td>
+        <td>{{ result.status }}</td>
+        <td> {{ result.phase | join(', ') }}</td>
+        <td>{{ result.type }}</td>
       </tr>
-    </thead>
-    <tbody>
-      {% for result in results %}
-        <tr>
-          <td><a href="{{ url_for('trialpage', trial_id=result.nct) }}">{{ result.trial_name }}</a></td>
-          <td>{{ result.cancer_type }}</td>
-          <td>{{ result.treatment_type }}: {{ result.treatment }}</td>
-          <td>{{ result.status }}</td>
-          <td> {{ result.phase | join(', ') }}</td>
-          <td>{{ result.type }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    {% endfor %}
+  </tbody>
+</table>
 
   {% endblock %}
