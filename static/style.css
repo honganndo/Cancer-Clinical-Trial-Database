@@ -24,12 +24,13 @@ select {
   font-size: 100%;
 }
 
-h1, h2, h3 {
+h2, h3 {
   color: var(--blue);
   margin-bottom: 10px;
 }
 
 h1 {
+  color: var(--light-background);
   font-size: 48px;
 }
 
@@ -66,7 +67,10 @@ input {
 }
 
 nav {
-  display: flex;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 2fr 1fr;
+  justify-items: center;
   align-items: center;
   padding: 1rem;
   background-color: var(--dark-background);
@@ -76,26 +80,40 @@ nav * {
   background-color: transparent;
 }
 
+nav div * {
+  color: var(--light-background);
+}
+
 nav h1 {
-  flex: auto;
+  background-color: transparent;
   margin: 0;
+  grid-column: 2/3;
 }
 
-nav h1 a {
-  text-decoration: none;
-  padding: 0.25rem 0.5rem;
-}
-
-nav ul  {
+nav .account {
+  grid-column: 3/4;
+  justify-self: end;
   display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  gap: 20px;
+  align-items: center;
 }
 
-nav ul li a, nav ul li span, header .action {
-  display: block;
-  padding: 0.5rem;
+.account span {
+  color: var(--blue);
+  font-size: 24px;
+}
+
+nav .menu-buttons {
+  grid-area: 1/1;
+  display: flex;
+  gap: 20px;
+}
+
+.menu-buttons input {
+  border-radius: 30px;
+  border: solid var(--blue);
+  outline: none;
+  padding: 0;
 }
 
 .content {

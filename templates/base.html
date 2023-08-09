@@ -3,21 +3,25 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <nav>
   <h1>Cancer Clinical Trials</h1>
-  <div class="menu">
-    {% if g.user %}
-      <span>User: {{ g.user['user_name'] }}</span>
-      <a href="logout">Log Out</a>
-      <form method="get" action="/">
-        <input type="submit" value="Back to Home">
-      </form>
-      <form method="get" action="/account">
-        <input type="submit" value="My Account">
-      </form>
-    {% else %}
+  {% if g.user %}
+  <div class="account">
+    <span>User: {{ g.user['user_name'] }}</span>
+    <a href="logout">Log Out</a>
+  </div>
+  <div class="menu-buttons">
+    <form method="get" action="/">
+      <input type="submit" value="Home">
+    </form>
+    <form method="get" action="/account">
+      <input type="submit" value="My Account">
+    </form>
+  </div>
+  {% else %}
+    <div class="account">
       <a href="register">Register</a>
       <a href="login">Log In</a>
-    {% endif %}
-  </div>
+    </div>
+  {% endif %}
 </nav>
 <section class="content">
   <header>
