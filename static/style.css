@@ -155,12 +155,12 @@ button:hover {
   flex: 1;
 }
 
-.main-search button {
+.search-btn {
   color: var(--light-text);
   border: solid var(--light-text);
 }
 
-.main-search button:hover {
+.search-btn:hover {
   background-color: var(--light-text);
   color: var(--light-background);
 }
