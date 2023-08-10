@@ -1,74 +1,76 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}{% endblock %}</h1>
+  <h2>{% block title %}{% endblock %}</h2>
 {% endblock %}
 
 {% block content %}
   <body>
     {% for result in results %}
-    <h1>{{ result.trial_name }}</h1>
+    <h2>{{ result.trial_name }}</h2>
 
-    <form action="{{ url_for('add_save') }}" method="POST">
-      <input type="hidden" name="trial_id" value="{{ result.nct }}">
-      <button type="submit">Add to Favorites</button>
-    </form>
+    {% if trial_saved %}
+      <form action="{{ url_for('remove_save') }}" method="POST">
+        <input type="hidden" name="trial_id" value="{{ result.nct }}">
+        <button type="submit" class="general-btn">Remove from Favorites</button>
+      </form>
+    {% else %}
+      <form action="{{ url_for('add_save') }}" method="POST">
+        <input type="hidden" name="trial_id" value="{{ result.nct }}">
+        <button type="submit" class="add-btn">Add to Favorites</button>
+      </form>
+    {% endif %}
 
-    <form action="{{ url_for('remove_save') }}" method="POST">
-      <input type="hidden" name="trial_id" value="{{ result.nct }}">
-      <button type="submit">Remove from Favorites</button>
-    </form>
-
-    <h2>Description</h2>
+    <h3>Description</h3>
     <p>{{ result.description }}</p>
 
-    <h2>Basic Information</h2>
+    <h3>Basic Information</h3>
     <ul>
-      <li>NCT Number: {{ result.nct }}</li>
-      <li>Status: {{ result.status }}</li>
-      <li>Number of Patients: {{ result.number_of_patients }}</li>
-      <li>Type: {{ result.type }}</li>
-      <li>Phase: {{ result.phase | join(', ') }}</li>
-      <li>Start Date: {{ result.start_date }}</li>
-      <li>End Date: {{ result.end_date }}</li>
+      <li><u>NCT Number</u>: {{ result.nct }}</li>
+      <li><u>Status</u>: {{ result.status }}</li>
+      <li><u>Number of Patients</u>: {{ result.number_of_patients }}</li>
+      <li><u>Type</u>: {{ result.type }}</li>
+      <li><u>Phase</u>: {{ result.phase | join(', ') }}</li>
+      <li><u>Start Date</u>: {{ result.start_date }}</li>
+      <li><u>End Date</u>: {{ result.end_date }}</li>
     </ul>
 
-    <h2>Eligibility</h2>
+    <h3>Eligibility</h3>
     <ul>
-      <li>Age: {{ result.age | join(', ') }}</li>
-      <li>Sex: {{ result.sex }}</li>
+      <li><u>Age</u>: {{ result.age | join(', ') }}</li>
+      <li><u>Sex</u>: {{ result.sex }}</li>
     </ul>
 
-    <h2>Condition/Intervention Information</h2>
+    <h3>Condition/Intervention Information</h3>
     <ul>
-      <li>Cancer Type: {{ result.cancer_type }}</li>
-      <li>Treatment: {{ result.treatment }}</li>
-      <li>Treatment Type: {{ result.treatment_type }}</li>
-      <li>Primary Outcome Measurements: {{ result.primary_measurements }}</li>
-      <li>Secondary Outcome Measurements: {{ result.secondary_measurements }}</li>
-      <li>Other: {{ result.other }}</li>
+      <li><u>Cancer Type</u>: {{ result.cancer_type }}</li>
+      <li><u>Treatment</u>: {{ result.treatment }}</li>
+      <li><u>Treatment Type</u>: {{ result.treatment_type }}</li>
+      <li><u>Primary Outcome Measurements</u>: {{ result.primary_measurements }}</li>
+      <li><u>Secondary Outcome Measurements</u>: {{ result.secondary_measurements }}</li>
+      <li><u>Other</u>: {{ result.other }}</li>
     </ul>
     {% endfor %}
 
-    <h2>Location(s)</h2>
+    <h3>Location(s)</h3>
     {% for location in locations %}
-    Location Name: {{ location.location_name }}
+    <u>Location Name</u>: {{ location.location_name }}
     <ul>
-      <li>Address: {{ location.address_city }},
+      <li><u>Address</u>: {{ location.address_city }},
                    {{ location.address_state }},
                    {{ location.address_zipcode }},
                    {{ location.address_country }}
     </ul>
     {% endfor %}
 
-    <h2>Sponsor(s) Information</h2>
+    <h3>Sponsor(s) Information</h3>
     {% for sponsor in sponsors %}
-    Institution Name(s): {{ sponsor.institution_name }}
+    <u>Institution Name(s)</u>: {{ sponsor.institution_name }}
     <ul>
-      <li>Contact Person Name: {{ sponsor.contact_person_name }}</li>
-      <li>Phone Number: {{ sponsor.phone_number }}</li>
-      <li>Email: {{ sponsor.email }}</li>
-      <li>Address: {{ sponsor.address_street }},
+      <li><u>Contact Person Name</u>: {{ sponsor.contact_person_name }}</li>
+      <li><u>Phone Number</u>: {{ sponsor.phone_number }}</li>
+      <li><u>Email</u>: {{ sponsor.email }}</li>
+      <li><u>Address</u>: {{ sponsor.address_street }},
                    {{ sponsor.address_city }},
                    {{ sponsor.address_state }},
                    {{ sponsor.address_zipcode }},

@@ -1,22 +1,26 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Search{% endblock %}</h1>
+  <h2>{% block title %}Search{% endblock %}</h2>
 {% endblock %}
 
 {% block content %}
-  <form method="POST" action="{{ url_for('results') }}">
-    <label for="condition">Condition/Keyword:</label>
-    <input type="search" id="condition" name="condition" placeholder="Search by Keyword" autofocus>
-    
-    <label for="location">Location:</label>
-    <select id="location" name="location" >
-      <option value="">Any Location</option>
-      {% for location in locations %}
-          <option value="{{ location }}">{{ location }}</option>
-      {% endfor %}
-    </select>
+  <form method="POST" action="{{ url_for('results') }}" class="input-container">
+    <div class="input-field">
+      <label for="condition">Condition/Keyword:</label>
+      <input type="search" id="condition" name="condition" placeholder="Search by Keyword" autofocus>
+    </div>
 
-    <button type="submit">Search</button>
+    <div class="input-field">
+      <label for="location">Location:</label>
+      <select id="location" name="location" >
+        <option value="">Any Location</option>
+        {% for location in locations %}
+            <option value="{{ location }}">{{ location }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="general-btn">Search</button>
   </form>  
 {% endblock %}

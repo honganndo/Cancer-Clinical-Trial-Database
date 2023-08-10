@@ -198,7 +198,6 @@ def results():
         locations = sorted(set([row[0] for row in results]))
 
     condition = request.form.get('condition')
-    nct = request.form.get('nct')
     location = request.form.get('location')
     status = request.form.get('status')
     phase = request.form.get('phase')
@@ -220,21 +219,20 @@ def results():
 
             # Modify search query if additional selectors are applied.
             if condition:
-                where_clause.append(
+                where_str = (
                     f"UPPER(trial_name) LIKE UPPER('%{condition}%') OR "
                     f"UPPER(description) LIKE UPPER('%{condition}%') OR "
                     f"UPPER(cancer_type) LIKE UPPER('%{condition}%') OR "
                     f"UPPER(treatment) LIKE UPPER('%{condition}%')")
-            if nct:
-                if nct[:3].upper() == "NCT":
-                    nct = nct[3:]
+                
+                if condition[:3].upper() == "NCT":
+                    condition = condition[3:]
                 
                 # invalid NCT number
-                if nct.isdigit():
-                    where_clause.append(f"clinical_trials.nct = {nct}")
-                else:
-                    # invalid NCT number
-                    where_clause.append(f"clinical_trials.nct = -1")
+                if condition.isdigit():
+                    where_str += (f" OR clinical_trials.nct = {condition}")
+
+                where_clause.append(where_str)
 
             if location:
                 results_query.append(
@@ -282,7 +280,7 @@ def results():
     return render_template("results.html", condition=condition, status=status, 
                            location=location, results=results, 
                            locations=locations, phase=phase, type=type, sex=sex,
-                           age=age, treatment_type=treatment_type, nct=nct,
+                           age=age, treatment_type=treatment_type,
                            start_date=start_date, end_date=end_date)
 
 
@@ -322,8 +320,11 @@ def trialpage(trial_id):
 
         sponsors = connection.execute(text(sponsors_query))
 
+    trial_saved = saved(trial_id)
+
     return render_template("trialpage.html", results = results, 
-                           sponsors = sponsors, locations = locations)
+                           sponsors = sponsors, locations = locations, 
+                           trial_saved = trial_saved)
 
 
 @app.route('/account')
@@ -379,12 +380,7 @@ def remove_save():
     """
     trial_id = request.form['trial_id']
 
-    # Check if trial is actually saved
-    save_query = (f"SELECT * FROM saves WHERE user_name = '{session['name']}' "
-                  f"AND nct = '{trial_id}'")
-    save_row = g.conn.execute(text(save_query)).fetchone()
-
-    if save_row:
+    if saved(trial_id):
         params = {"user_name": session['name'], "nct": trial_id}
         g.conn.execute(text("DELETE FROM saves WHERE user_name = :user_name "
                             "AND nct = :nct"), params)
@@ -392,6 +388,13 @@ def remove_save():
 
     return redirect(url_for('trialpage', trial_id = trial_id))
 
+# Helper method to check if trial already saved
+def saved(trial_id):
+    save_query = (f"SELECT * FROM saves WHERE user_name = '{session['name']}' "
+                  f"AND nct = '{trial_id}'")
+    save_row = g.conn.execute(text(save_query)).fetchone()
+
+    return save_row
 
 if __name__ == "__main__":
     import click

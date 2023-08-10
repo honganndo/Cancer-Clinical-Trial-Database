@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}User Account{% endblock %}</h1>
+  <h2>{% block title %}User Account{% endblock %}</h2>
 {% endblock %}
 
 {% block content %}
@@ -25,10 +25,10 @@
             <th> Phase </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="table-body">
         {% for result in results %}
-          <tr>
-            <td><a href="{{ url_for('trialpage', trial_id=result.nct) }}">{{ result.trial_name }}</a></td>
+          <tr id="{{result.nct}}">
+            <td>{{ result.trial_name }}</td>
             <td>{{ result.cancer_type }}</td>
             <td>{{ result.treatment_type }}: {{ result.treatment }}</td>
             <td>{{ result.status }}</td>

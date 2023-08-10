@@ -1,20 +1,27 @@
 <!doctype html>
 <title>{% block title %}{% endblock %}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='script.js') }}" defer></script>
 <nav>
-  <h1>Cancer Clinical Trial Database</h1>
+  <h1>Cancer Clinical Trials</h1>
   {% if g.user %}
+  <div class="account">
     <span>User: {{ g.user['user_name'] }}</span>
-    <a href="logout">Log Out</a>
+    <a href="{{ url_for('logout') }}">Log Out</a>
+  </div>
+  <div class="menu-buttons">
     <form method="get" action="/">
-      <input type="submit" value="Back to Home">
+      <button type="submit">Home</button>
     </form>
     <form method="get" action="/account">
-      <input type="submit" value="My Account">
+      <button type="submit">My Account</button>
     </form>
+  </div>
   {% else %}
-    <a href="register">Register</a>
-    <a href="login">Log In</a>
+    <div class="account">
+      <a href="register">Register</a>
+      <a href="login">Log In</a>
+    </div>
   {% endif %}
 </nav>
 <section class="content">
@@ -22,7 +29,7 @@
     {% block header %}{% endblock %}
   </header>
   {% for message in get_flashed_messages() %}
-    <b><div class="flash">{{ message }}</div></b>
+    <div class="flash">{{ message }}</div>
   {% endfor %}
   {% block content %}{% endblock %}
 </section>
