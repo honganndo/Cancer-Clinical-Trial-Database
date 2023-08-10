@@ -44,17 +44,25 @@ a {
   transition: .3s ease-out;
 }
 
-a:hover {
+nav a {
   color: var(--blue);
+}
+
+a:hover {
   transform: scale(1.1);
 }
 
 p {
-  line-height: 2;
+  line-height: 1.5;
 }
 
 ::placeholder {
   color: var(--light-text);
+}
+
+li {
+  list-style-type: none;
+  margin-bottom: 0.5em;
 }
 
 input, select {
@@ -79,7 +87,7 @@ nav * {
   background-color: transparent;
 }
 
-nav div * {
+nav .menu-buttons button {
   color: var(--light-background);
 }
 
@@ -87,6 +95,10 @@ nav h1 {
   background-color: transparent;
   margin: 0;
   grid-column: 2/3;
+}
+
+h3 {
+  margin-top: 1em;
 }
 
 nav .account {
@@ -98,7 +110,7 @@ nav .account {
 }
 
 .account span {
-  color: var(--blue);
+  color: var(--white);
   font-size: 24px;
 }
 
@@ -114,10 +126,6 @@ button {
   padding: 0 10px;
   cursor: pointer;
   transition: all .2s ease-in-out;
-}
-
-button:hover {
-  transform: scale(1.1);
 }
 
 .menu-buttons button {
