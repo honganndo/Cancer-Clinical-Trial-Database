@@ -320,8 +320,11 @@ def trialpage(trial_id):
 
         sponsors = connection.execute(text(sponsors_query))
 
+    trial_saved = saved(trial_id)
+
     return render_template("trialpage.html", results = results, 
-                           sponsors = sponsors, locations = locations)
+                           sponsors = sponsors, locations = locations, 
+                           trial_saved = trial_saved)
 
 
 @app.route('/account')
@@ -377,12 +380,7 @@ def remove_save():
     """
     trial_id = request.form['trial_id']
 
-    # Check if trial is actually saved
-    save_query = (f"SELECT * FROM saves WHERE user_name = '{session['name']}' "
-                  f"AND nct = '{trial_id}'")
-    save_row = g.conn.execute(text(save_query)).fetchone()
-
-    if save_row:
+    if saved(trial_id):
         params = {"user_name": session['name'], "nct": trial_id}
         g.conn.execute(text("DELETE FROM saves WHERE user_name = :user_name "
                             "AND nct = :nct"), params)
@@ -390,6 +388,13 @@ def remove_save():
 
     return redirect(url_for('trialpage', trial_id = trial_id))
 
+# Helper method to check if trial already saved
+def saved(trial_id):
+    save_query = (f"SELECT * FROM saves WHERE user_name = '{session['name']}' "
+                  f"AND nct = '{trial_id}'")
+    save_row = g.conn.execute(text(save_query)).fetchone()
+
+    return save_row
 
 if __name__ == "__main__":
     import click

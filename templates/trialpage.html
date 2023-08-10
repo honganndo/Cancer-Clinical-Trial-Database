@@ -9,15 +9,17 @@
     {% for result in results %}
     <h2>{{ result.trial_name }}</h2>
 
-    <form action="{{ url_for('add_save') }}" method="POST">
-      <input type="hidden" name="trial_id" value="{{ result.nct }}">
-      <button type="submit" class="general-btn">Add to Favorites</button>
-    </form>
-
-    <form action="{{ url_for('remove_save') }}" method="POST">
-      <input type="hidden" name="trial_id" value="{{ result.nct }}">
-      <button type="submit" class="general-btn">Remove from Favorites</button>
-    </form>
+    {% if trial_saved %}
+      <form action="{{ url_for('remove_save') }}" method="POST">
+        <input type="hidden" name="trial_id" value="{{ result.nct }}">
+        <button type="submit" class="general-btn">Remove from Favorites</button>
+      </form>
+    {% else %}
+      <form action="{{ url_for('add_save') }}" method="POST">
+        <input type="hidden" name="trial_id" value="{{ result.nct }}">
+        <button type="submit" class="add-btn">Add to Favorites</button>
+      </form>
+    {% endif %}
 
     <h3>Description</h3>
     <p>{{ result.description }}</p>
