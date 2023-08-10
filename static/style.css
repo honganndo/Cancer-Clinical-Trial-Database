@@ -85,6 +85,7 @@ nav {
 
 nav * {
   background-color: transparent;
+  align-items: center;
 }
 
 nav .menu-buttons button {
@@ -95,6 +96,7 @@ nav h1 {
   background-color: transparent;
   margin: 0;
   grid-column: 2/3;
+  text-align: center;
 }
 
 h3 {
@@ -214,6 +216,7 @@ table {
   border: 2px solid var(--dark-background);
   font-size: 0.8rem;
   width: 100%;
+  table-layout:fixed;
 }
 
 td, th {
@@ -229,6 +232,9 @@ th {
 td {
   text-align: center;
   background-color: rgb(250,250,250);
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  word-wrap: break-word;
 }
 
 .table-body tr {
@@ -237,4 +243,35 @@ td {
 
 .table-body tr:hover {
   color: var(--blue);
+}
+
+/* MEDIA QUERIES */
+@media (max-width: 1200px) {
+  h1 {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .account span {
+    font-size: 16px;
+  }
+
+  .menu-buttons button {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 800px) {
+  h1 {
+    font-size: 24px;
+  }
+  
+  .account span, a {
+    font-size: 12px;
+  }
+
+  .menu-buttons button {
+    font-size: 10px;
+  }
 }
