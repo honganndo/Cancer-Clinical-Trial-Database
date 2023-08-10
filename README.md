@@ -1,6 +1,6 @@
 # Cancer Clinical Trial Database
 
-![Cancer Clinical Trial results page screenshot](./images/results_screenshot.png "Cancer Clinical Trial results page screenshot")
+![Cancer Clinical Trial results page screenshot](./images/results_screenshot-2.png "Cancer Clinical Trial results page screenshot")
 
 ## Overview
 Cancer is one of the deadliest diseases in the world and yet there is still no true cure for it. Many clinical trials are currently underway with the goal of providing better outcomes than standard treatments. We design a simple cancer clinical trial database that helps cancer patients navigate through various available trials. The database allows users to search through and learn more about each trial including the cancer type, interventions, and outcomes being studied; the times and locations each study takes place; the eligibility criteria for patients that are being accepted; as well as the institutions and sponsors that are conducting each study. Clinical trials can also be further filtered by various study parameters. Lastly, users can create an account to save clinical trials of their interest.
