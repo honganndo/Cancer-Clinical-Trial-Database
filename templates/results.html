@@ -11,8 +11,8 @@
     <button type="submit" class="general-btn">Search</button>
   </div>
 
+  <h3>Advanced Search</h3>
   <div class="adv-search">
-    <h3>Advanced Search</h3>
     <div class="filter">
       <label for="location">Location:</label>
       <select id="location" name="location" >
@@ -100,12 +100,12 @@
       <input type="date" id="start_date" name="start_date" {% if start_date is not none %}value="{{start_date}}"{% endif %}>
     </div>
 
+    <button type="button" id=clear-btn class="general-btn">Clear</button>
+
     <div class="filter">
       <label for="end_date">End Date:</label>
       <input type="date" id="end_date" name="end_date" {% if end_date is not none %}value="{{end_date}}"{% endif %}>
     </div>
-
-    <button type="button" id=clear-btn class="general-btn">Clear</button>
   </div>
 </form>
 
