@@ -57,7 +57,7 @@ p {
   color: var(--light-text);
 }
 
-input {
+input, select {
   background-color: rgb(233, 235, 243);
   border-radius: 30px;
   border: none;
@@ -155,24 +155,25 @@ button:hover {
   flex: 1;
 }
 
-.search-btn {
+.general-btn {
   color: var(--light-text);
   border: solid var(--light-text);
+  width: fit-content;
 }
 
-.search-btn:hover {
+.general-btn:hover {
   background-color: var(--light-text);
   color: var(--light-background);
 }
 
-.adv-search {
+.adv-search, .input-container {
   display: flex;
   flex-direction: column;
   gap: 10px;
   margin-bottom: 2em;
 }
 
-.filter {
+.filter, .input-field {
   display: flex;
   align-items: center;
   gap: 20px;
@@ -182,11 +183,16 @@ button:hover {
   flex: 1;
 }
 
+.input-field input {
+  flex: 1;
+}
+
 table {
   border-collapse: collapse;
   color: var(--dark-text);
   border: 2px solid var(--dark-background);
   font-size: 0.8rem;
+  width: 100%;
 }
 
 td, th {
