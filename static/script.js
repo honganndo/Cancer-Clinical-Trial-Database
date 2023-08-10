@@ -5,19 +5,27 @@ const phaseField = document.getElementById('phase');
 const typeField = document.getElementById('type');
 const sexField = document.getElementById('sex');
 const ageField = document.getElementById('age');
-const treatment_typeField = document.getElementById('treatment_type');
-const start_dateField = document.getElementById('start_date');
-const end_dateField = document.getElementById('end_date');
+const treatmentTypeField = document.getElementById('treatment_type');
+const startDateField = document.getElementById('start_date');
+const endDateField = document.getElementById('end_date');
+const tableRows = document.querySelectorAll('.table-body tr');
 
-clearButton.addEventListener('click', function() {
+// Implementation of clear search filters button
+clearButton.addEventListener('click', () => {
     locationField.selectedIndex = 0;
     statusField.selectedIndex = 0;
     phaseField.selectedIndex = 0;
     typeField.selectedIndex = 0;
     sexField.selectedIndex = 0;
     ageField.selectedIndex = 0;
-    treatment_typeField.selectedIndex = 0;
+    treatmentTypeField.selectedIndex = 0;
+    startDateField.value = '';
+    endDateField.value = '';
+});
 
-    start_dateField.value = '';
-    end_dateField.value = '';
+// Implementation of linking table row to trial page
+tableRows.forEach((row) => {
+    row.addEventListener('click', () => {
+        window.location = `./trialpage/${row.getAttribute('id')}`;
+    });
 });

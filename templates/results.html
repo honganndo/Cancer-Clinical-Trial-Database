@@ -121,16 +121,16 @@
         <th> Type </th>
     </tr>
   </thead>
-  <tbody>
+  <tbody class="table-body">
     {% for result in results %}
-      <tr>
-        <td><a href="{{ url_for('trialpage', trial_id=result.nct) }}">{{ result.trial_name }}</a></td>
-        <td>{{ result.cancer_type }}</td>
-        <td>{{ result.treatment_type }}: {{ result.treatment }}</td>
-        <td>{{ result.status }}</td>
-        <td> {{ result.phase | join(', ') }}</td>
-        <td>{{ result.type }}</td>
-      </tr>
+    <tr id="{{result.nct}}">
+      <td>{{ result.trial_name }}</td>
+      <td>{{ result.cancer_type }}</td>
+      <td>{{ result.treatment_type }}: {{ result.treatment }}</td>
+      <td>{{ result.status }}</td>
+      <td> {{ result.phase | join(', ') }}</td>
+      <td>{{ result.type }}</td>
+    </tr>
     {% endfor %}
   </tbody>
 </table>
