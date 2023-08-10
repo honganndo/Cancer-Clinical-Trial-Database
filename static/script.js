@@ -1,4 +1,5 @@
 const clearButton = document.getElementById('clear-btn');
+const conditionField = document.getElementById('condition');
 const locationField = document.getElementById('location');
 const statusField = document.getElementById('status');
 const phaseField = document.getElementById('phase');
@@ -13,6 +14,7 @@ const tableRows = document.querySelectorAll('.table-body tr');
 // Implementation of clear search filters button
 if (clearButton) {
     clearButton.addEventListener('click', () => {
+        conditionField.value = '';
         locationField.selectedIndex = 0;
         statusField.selectedIndex = 0;
         phaseField.selectedIndex = 0;

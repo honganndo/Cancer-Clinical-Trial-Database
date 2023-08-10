@@ -7,7 +7,7 @@
 {% block content %}
 <form method="POST" action="{{ url_for('results') }}">
   <div class="main-search">
-    <input type="search" id="condition" name="condition" placeholder="Keyword/NCT#">
+    <input type="search" id="condition" name="condition" {% if condition %}value="{{ condition }}"{% endif %} placeholder="Keyword/NCT#">
     <button type="submit" class="general-btn">Search</button>
   </div>
 
